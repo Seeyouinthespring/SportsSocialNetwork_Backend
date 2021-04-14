@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SportsSocialNetwork.DataAccessLayer;
 using SportsSocialNetwork.DataBaseModels;
 using SportsSocialNetwork.Interfaces;
 using SportsSocialNetwork.Services;
@@ -130,8 +131,9 @@ namespace SportsSocialNetwork
 
         private void AddOwnServices(IServiceCollection services)
         {
-            //services.AddScoped<ICommonRepository, CommonRepository>();
+            services.AddScoped<ICommonRepository, CommonRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISportsService, SportsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

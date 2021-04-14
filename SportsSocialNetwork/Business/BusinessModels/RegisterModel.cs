@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SportsSocialNetwork.Business.BusinessModels
 {
@@ -13,5 +14,16 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Role { get; set; }
+
+        public DateTime DateOfBirth { get; set; }
+
+        [Required(ErrorMessage = "Gender is required")]
+        public bool Gender { get; set; }
     }
 }
