@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace SportsSocialNetwork.DataBaseModels
 {
-    public class PlaygroundSportsConnection : BaseEntity
+    public class PlaygroundSportConnection : BaseEntity
     {
-        [ForeignKey(nameof(Playground))]
+        [ForeignKey(nameof(PlaygroundSportConnection.Playground))]
         public long PlaygroundId { get; set; }
         public Playground Playground { get; set; }
 
-        [ForeignKey(nameof(Sport))]
+        [ForeignKey(nameof(PlaygroundSportConnection.Sport))]
         public long SportId {get; set;}
         public Sport Sport { get; set; }
     }

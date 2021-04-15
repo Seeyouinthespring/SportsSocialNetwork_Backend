@@ -14,10 +14,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SportsSocialNetwork.DataAccessLayer;
 using SportsSocialNetwork.DataBaseModels;
+using SportsSocialNetwork.Helpers;
 using SportsSocialNetwork.Interfaces;
 using SportsSocialNetwork.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -64,6 +66,19 @@ namespace SportsSocialNetwork
             services.AddControllers();
             services.AddAutoMapper();
             services.AddMvc()
+                //(o =>
+                //{
+                //    o.ModelMetadataDetailsProviders.Add(new CustonValidationMetadataProvider());
+                //    o.EnableEndpointRouting = false;
+                //})
+                //.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(x =>
+                {
+                    //x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    //x.SerializerSettings.Culture = new CultureInfo("ru-Ru");
+                    //x.SerializerSettings.Culture.NumberFormat.NumberGroupSeparator = "";
+                    x.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss";
+                })
             //    .AddJsonOptions(opts =>
             //{
             //    opts.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
@@ -134,6 +149,7 @@ namespace SportsSocialNetwork
             services.AddScoped<ICommonRepository, CommonRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ISportsService, SportsService>();
+            services.AddScoped<IPlaygroundService, PlaygroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

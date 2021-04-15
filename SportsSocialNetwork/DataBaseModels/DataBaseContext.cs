@@ -17,6 +17,6 @@ namespace SportsSocialNetwork.DataBaseModels
 
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Playground> Playgrounds { get; set; }
-        public DbSet<PlaygroundSportsConnection> PlaygroundSportsConnections { get; set; }
+        public DbSet<PlaygroundSportConnection> PlaygroundSportConnections { get; set; }
     }
 }

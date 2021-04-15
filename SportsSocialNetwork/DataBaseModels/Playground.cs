@@ -38,6 +38,6 @@ namespace SportsSocialNetwork.DataBaseModels
         public string ApplicationUserId { get; set; }
         public ApplicationUser ResponsiblePerson { get; set; }
 
-        public ICollection<PlaygroundSportsConnection> SportsProvided { get; set; } = new HashSet<PlaygroundSportsConnection>();
+        public ICollection<PlaygroundSportConnection> Sports { get; set; }
     }
 }
