@@ -36,7 +36,6 @@ namespace SportsSocialNetwork.Services
             if (entity == null) return null;
 
             entity = Mapper.Map(model, entity);
-            //entity = model.MapTo<Playground>();
 
              _commonRepository.Update(entity);
             await _commonRepository.SaveAsync();

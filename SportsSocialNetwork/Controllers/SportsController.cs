@@ -51,7 +51,7 @@ namespace SportsSocialNetwork.Controllers
         /// <returns></returns>
         [HttpPost]
         [SwaggerResponse200(typeof(SportViewModel))]
-        public async Task<IActionResult> Create(SportDtoModel model)
+        public async Task<IActionResult> Create([FromBody]SportDtoModel model)
         {
             return await GetResultAsync(() => _service.CreateAsync(model));
         }
@@ -66,7 +66,7 @@ namespace SportsSocialNetwork.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [SwaggerResponse200(typeof(SportViewModel))]
-        public async Task<IActionResult> Update(SportDtoModel model, long id)
+        public async Task<IActionResult> Update([FromBody] SportDtoModel model, long id)
         {
             return await GetResultAsync(() => _service.UpdateAsync(model, id));
         }
