@@ -1,9 +1,7 @@
-﻿using System;
+﻿using SportsSocialNetwork.Business.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using static SportsSocialNetwork.Business.Enums.Enums;
 
 namespace SportsSocialNetwork.Business.BusinessModels
 {

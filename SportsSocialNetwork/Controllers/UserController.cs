@@ -54,7 +54,7 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 401;
                 return new JsonResult(new Response
                 {
-                    Status = "Unauthorized",
+                    Code = "Unauthorized",
                     Message = "You have entred incorrect data"
                 });
             }
@@ -63,7 +63,7 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 409;
                 return new JsonResult(new Response
                 {
-                    Status = "Unauthorized",
+                    Code = "Unauthorized",
                     Message = @$"Your account has been locked: {((TimeSpan)(user.LockoutEnd - DateTime.Today)).TotalDays } days left"
                 });
             }
@@ -83,7 +83,7 @@ namespace SportsSocialNetwork.Controllers
             var token = new JwtSecurityToken(
                 issuer: _configuration["TokenAuthentication:Issuer"],
                 audience: _configuration["TokenAuthentication:Audience"],
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddHours(5),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
@@ -117,7 +117,7 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 409;
                 return new JsonResult(new Response
                 {
-                    Status = "Conflict",
+                    Code = "Conflict",
                     Message = "Such UserName has been already taken!"
                 });
             }
@@ -127,26 +127,26 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 409;
                 return new JsonResult(new Response
                 {
-                    Status = "Conflict",
+                    Code = "Conflict",
                     Message = "Such Email has been already taken!"
                 });
             }
 
-            if (!await roleManager.RoleExistsAsync(UserRoles.PLAYER))
-                await roleManager.CreateAsync(new IdentityRole(UserRoles.PLAYER));
+            if (!await roleManager.RoleExistsAsync(UserRoles.SPORTSMAN))
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.SPORTSMAN));
             if (!await roleManager.RoleExistsAsync(UserRoles.LANDLORD))
                 await roleManager.CreateAsync(new IdentityRole(UserRoles.LANDLORD));
-
-            var role = await roleManager.FindByNameAsync(UserRoles.PLAYER);
 
             ApplicationUser user = new ApplicationUser()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.UserName,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 //FullName = model.FullName,
-                //Gender = model.Gender,
-                //BirthDate = model.DateOfBirth.DateTime,
+                Gender = model.Gender,
+                DateOfBirth = model.DateOfBirth,
                 //CreatedDate = GetCurrentDate(),
                 //RoleId = role.Id
             };
@@ -157,15 +157,14 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 400;
                 return new JsonResult(new Response
                 {
-                    Status = "BadReques",
+                    Code = "BadReques",
                     Message = "User creation failed! Please check input data"
                 });
             }
 
-            if (await roleManager.RoleExistsAsync(UserRoles.PLAYER))
-                await userManager.AddToRoleAsync(user, UserRoles.PLAYER);
+            if (await roleManager.RoleExistsAsync(model.Role))
+                await userManager.AddToRoleAsync(user, model.Role);
             
-
             return await Login(new LoginModel
             {
                 UserName = user.UserName,
@@ -187,7 +186,7 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 409;
                 return new JsonResult(new Response
                 {
-                    Status = "Conflict",
+                    Code = "Conflict",
                     Message = "Such UserName has been already taken!"
                 });
             }
@@ -197,7 +196,7 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 409;
                 return new JsonResult(new Response
                 {
-                    Status = "Conflict",
+                    Code = "Conflict",
                     Message = "Such Email has been already taken!"
                 });
             }
@@ -205,16 +204,15 @@ namespace SportsSocialNetwork.Controllers
             if (!await roleManager.RoleExistsAsync(UserRoles.ADMINISTRATOR))
                 await roleManager.CreateAsync(new IdentityRole(UserRoles.ADMINISTRATOR));
 
-            var role = await roleManager.FindByNameAsync(UserRoles.ADMINISTRATOR);
-
             ApplicationUser user = new ApplicationUser()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.UserName,
+                FirstName = model.FirstName,
                 //FullName = model.FullName,
-                //Gender = model.Gender,
-                //BirthDate = model.DateOfBirth.DateTime,
+                Gender = model.Gender,
+                DateOfBirth = model.DateOfBirth,
                 //CreatedDate = GetCurrentDate(),
                 //RoleId = role.Id
             };
@@ -224,15 +222,13 @@ namespace SportsSocialNetwork.Controllers
                 HttpContext.Response.StatusCode = 400;
                 return new JsonResult(new Response
                 {
-                    Status = "BadReques",
+                    Code = "BadReques",
                     Message = "User creation failed! Please check input data"
                 });
             }
 
             if (await roleManager.RoleExistsAsync(UserRoles.ADMINISTRATOR))
-            {
                 await userManager.AddToRoleAsync(user, UserRoles.ADMINISTRATOR);
-            }
 
             return await Login(new LoginModel
             {

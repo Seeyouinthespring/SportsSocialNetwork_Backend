@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SportsSocialNetwork.Business.BusinessModels;
 using SportsSocialNetwork.Helpers;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -37,5 +38,16 @@ namespace SportsSocialNetwork.Controllers
                 return DateTime.Now;
             return DateTime.TryParse(dateFromRequest, null, DateTimeStyles.AdjustToUniversal, out var currentDate) ? currentDate : DateTime.Now;
         }
+
+        internal JsonResult GenerateErrorResponse(int status, string code, string message = null)
+        {
+            HttpContext.Response.StatusCode = status;
+            return new JsonResult(new Response
+            {
+                Code = code,
+                Message = message
+            });
+        }
+
     }
 }

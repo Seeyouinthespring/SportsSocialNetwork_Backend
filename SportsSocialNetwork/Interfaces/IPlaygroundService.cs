@@ -12,5 +12,6 @@ namespace SportsSocialNetwork.Interfaces
         Task<List<PlaygroundViewModel>> GetAllAsync(string search = null);
         Task<PlaygroundViewModel> GetAsync(long id);
         Task DeleteAsync(long id);
+        Task<PlaygroundViewModel> ApproveAsync(long id);
     }
 }

@@ -69,5 +69,19 @@ namespace SportsSocialNetwork.Services
 
             await _commonRepository.SaveAsync();
         }
+
+        public async Task<PlaygroundViewModel> ApproveAsync(long id)
+        {
+            Playground entity = await _commonRepository.FindByCondition<Playground>(x => x.Id == id)
+                .FirstOrDefaultAsync();
+            if (entity == null) return null;
+
+            entity.IsApproved = true;
+
+            _commonRepository.Update(entity);
+            await _commonRepository.SaveAsync();
+
+            return await GetAsync(entity.Id);
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace SportsSocialNetwork.DataBaseModels
         public string RenterId { get; set; }
         public ApplicationUser Renter { get; set; }
 
-        public string ApplicantName { get; set; }
+        public string RenterName { get; set; }
 
         public bool IsOnce { get; set; }
 
@@ -23,6 +23,6 @@ namespace SportsSocialNetwork.DataBaseModels
 
         public bool IsExecuted { get; set; }
 
-        public bool Fee { get; set; }
+        public float Fee { get; set; }
     }
 }

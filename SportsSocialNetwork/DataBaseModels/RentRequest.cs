@@ -9,9 +9,9 @@ namespace SportsSocialNetwork.DataBaseModels
         public long PlaygroundId { get; set; }
         public Playground Playground { get; set; }
 
-        [ForeignKey(nameof(Applicant))]
-        public string ApplicantId { get; set; }
-        public ApplicationUser Applicant { get; set; }
+        [ForeignKey(nameof(Renter))]
+        public string RenterId { get; set; }
+        public ApplicationUser Renter { get; set; }
 
         public bool IsOnce { get; set; }
 

@@ -17,8 +17,8 @@ namespace SportsSocialNetwork.Helpers
 
             var loginService = request.HttpContext.RequestServices.GetService(typeof(IUserService)) as IUserService;
 
-            return "123";
-            //return loginService.GetUserByNameAsync(userName).Id;
+            //return "123";
+            return loginService.GetUserByNameAsync(userName).Id;
         }
 
         internal static string GetCurrentUserName(HttpRequest request)

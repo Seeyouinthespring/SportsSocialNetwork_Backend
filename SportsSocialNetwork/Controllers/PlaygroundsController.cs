@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SportsSocialNetwork.Attributes;
 using SportsSocialNetwork.Business.BusinessModels;
 using SportsSocialNetwork.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SportsSocialNetwork.Controllers
@@ -51,6 +51,7 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <param name="model">Playground Model</param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         [SwaggerResponse200(typeof(PlaygroundViewModel))]
         public async Task<IActionResult> Create([FromBody]PlaygroundDtoModel model)
@@ -66,6 +67,7 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="model">Playground Model</param>
         /// <param name="id">PlaygroundId. Example 2</param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("{id}")]
         [SwaggerResponse200(typeof(PlaygroundViewModel))]
         public async Task<IActionResult> Update([FromBody] PlaygroundDtoModel model, long id)
@@ -80,6 +82,7 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <param name="id">Playground id. Example: 5</param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete("{id}")]
         [SwaggerResponseNoContent]
         public async Task<IActionResult> Delete(long id)
@@ -88,5 +91,21 @@ namespace SportsSocialNetwork.Controllers
             return NoContent();
         }
         #endregion
+
+        #region Approve playground
+        /// <summary>
+        /// Update Playground status
+        /// </summary>
+        /// <param name="id">PlaygroundId. Example 2</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("Approve/{id}")]
+        [SwaggerResponse200(typeof(PlaygroundViewModel))]
+        public async Task<IActionResult> Approve(long id)
+        {
+            return await GetResultAsync(() => _service.ApproveAsync(id));
+        }
+        #endregion
+
     }
 }
