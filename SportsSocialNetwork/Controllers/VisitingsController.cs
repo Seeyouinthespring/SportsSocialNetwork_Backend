@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using SportsSocialNetwork.Attributes;
 using SportsSocialNetwork.Interfaces;
 using System.Threading.Tasks;
+using SportsSocialNetwork.Business.BusinessModels;
 
 namespace SportsSocialNetwork.Controllers
 {
@@ -26,7 +27,7 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="appointmentId">Appointment Id. Example: 2</param>
         /// <returns></returns>
         [HttpPost("{appointmentId}")]
-        [SwaggerResponseNoContent]
+        [SwaggerResponse200(typeof(VisitingBaseModel))]
         public async Task<IActionResult> Create(long appointmentId)
         {
             var userId = GetCurrentUserId();
@@ -48,7 +49,7 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="id">AppointmentVisitId. Example 2</param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        [SwaggerResponseNoContent]
+        [SwaggerResponse200(typeof(VisitingBaseModel))]
         public async Task<IActionResult> Update(long id)
         {
             var model = await _service.GetVisitingByIdAsync(id);

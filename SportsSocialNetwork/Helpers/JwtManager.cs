@@ -37,7 +37,6 @@ namespace SportsSocialNetwork.Helpers
         public static string GetUserNameFromToken(string token)
         {
             JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-
             return jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
         }
         private static JwtSecurityToken GenerateToken(TokenProviderOptions jwtOptions, IEnumerable<Claim> claims, SigningCredentials signingCredentials)

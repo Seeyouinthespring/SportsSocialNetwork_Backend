@@ -46,8 +46,13 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
         public float? Square { get; set; }
 
+        public bool IsApproved { get; set; }
+
+        public bool IsCommercial {get; set;}
+
+        public int? PriceForOneHour { get; set; }
         //public string ApplicationUserId { get; set; }
-        
+
         [Required]
         public long[] SportsIds { get; set; }
     }
@@ -56,6 +61,7 @@ namespace SportsSocialNetwork.Business.BusinessModels
     {
         public long Id { get; set; }
 
+        public string ApplicationUserId { get; set; }
         //public ResponsiblePersonViewModel ResponsiblePerson { get; set; }
 
         public ICollection<SportViewModel> SportsProvided { get; set; } 

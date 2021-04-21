@@ -7,8 +7,8 @@ namespace SportsSocialNetwork.Interfaces
 {
     public interface IPlaygroundService
     {
-        Task<PlaygroundViewModel> CreateAsync(PlaygroundDtoModel model);
-        Task<PlaygroundViewModel> UpdateAsync(PlaygroundDtoModel model, long id);
+        Task<PlaygroundViewModel> CreateAsync(PlaygroundDtoModel model, string userId);
+        Task<PlaygroundViewModel> UpdateAsync(PlaygroundDtoModel model, long id, string userId);
         Task<List<PlaygroundViewModel>> GetAllAsync(string search = null);
         Task<PlaygroundViewModel> GetAsync(long id);
         Task DeleteAsync(long id);

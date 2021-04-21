@@ -15,11 +15,9 @@ namespace SportsSocialNetwork.DataBaseModels
 
         public bool IsOnce { get; set; }
 
-        public int DurationDays {get; set;}
-
         public DateTime? Date { get; set; }
         
-        public byte DayOfTheWeek { get; set; }
+        public byte? DayOfTheWeek { get; set; }
 
         public TimeSpan StartTime { get; set; }
 

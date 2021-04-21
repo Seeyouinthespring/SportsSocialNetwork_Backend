@@ -53,9 +53,29 @@ namespace SportsSocialNetwork
 
             CreateMap<RentRequest, RentRequestViewModel>()
                 .ForMember(dest => dest.Playground, opt => opt.MapFrom(x => x.Playground))
+                //.ForMember(dest => dest.Renter.RentRequestId, opt => opt.MapFrom(src => src.Id));
                 .ForMember(dest => dest.Renter, opt => opt.MapFrom(x => x.Renter));
-                //.IncludeBase<ApplicationUser, ApplicationUserBaseViewModel>();
             CreateMap<RentRquestDtoModel, RentRequest>();
+
+            CreateMap<ApplicationUser, ApplicationUserRenterViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom
+                    (
+                        src => src.DateOfBirth > DateTime.Now.AddYears(DateTime.Now.Year - src.DateOfBirth.Year) ?
+                        DateTime.Now.Year - src.DateOfBirth.Year - 1 :
+                        DateTime.Now.Year - src.DateOfBirth.Year
+                ));
+
+            CreateMap<ApplicationUser, ApplicationUserMessageViewModel>();
+
+            CreateMap<ConfirmedRent, RentViewModel>();
+
+            CreateMap<Message, MessageViewModel>();
+            CreateMap<MessageDtoModel, Message>();
         }
     }
 }

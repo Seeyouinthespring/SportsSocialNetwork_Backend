@@ -16,9 +16,17 @@ namespace SportsSocialNetwork.Helpers
             if (string.IsNullOrEmpty(userName)) return null;
 
             var loginService = request.HttpContext.RequestServices.GetService(typeof(IUserService)) as IUserService;
-
-            //return "123";
             return loginService.GetUserByNameAsync(userName).Id;
+        }
+
+        internal static async Task<string> GetCurrentUserRole(HttpRequest request)
+        {
+            string userName = GetCurrentUserName(request);
+            if (string.IsNullOrEmpty(userName)) return null;
+
+            var loginService = request.HttpContext.RequestServices.GetService(typeof(IUserService)) as IUserService;
+
+            return await loginService.GetRoleByNameAsync(userName);
         }
 
         internal static string GetCurrentUserName(HttpRequest request)

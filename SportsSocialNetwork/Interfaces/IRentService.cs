@@ -1,4 +1,5 @@
 ﻿using SportsSocialNetwork.Business.BusinessModels;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,10 +9,14 @@ namespace SportsSocialNetwork.Interfaces
     {
         Task<RentRequestViewModel> AddRentRequestAsync(string userId, RentRquestDtoModel model);
 
-        Task<List<RentRequestViewModel>> GetAllAsync();
+        Task<List<RentRequestViewModel>> GetAllAsync(string userId = null, long? playgroundId = null);
 
         Task<RentRequestViewModel> GetAsync(long id);
 
         Task DeleteAsync(long id);
+
+        Task<List<RentViewModel>> GetAllRentsAsync(long playgroundId, DateTime? date = null, DateTime? startDate = null, DateTime? endDate = null);
+
+        Task<List<RentRequestViewModel>> ApproveRentRequestAsync(long rentRequestId, string userId, DateTime currentDate);
     }
 }

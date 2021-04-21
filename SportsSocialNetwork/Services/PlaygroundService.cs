@@ -18,9 +18,10 @@ namespace SportsSocialNetwork.Services
             _commonRepository = commonRepository;
         }
 
-        public virtual async Task<PlaygroundViewModel> CreateAsync(PlaygroundDtoModel model)
+        public virtual async Task<PlaygroundViewModel> CreateAsync(PlaygroundDtoModel model, string userId)
         {
             var entity = model.MapTo<Playground>();
+            entity.ApplicationUserId = userId;
 
             await _commonRepository.AddAsync(entity);
             await _commonRepository.SaveAsync();
@@ -28,7 +29,7 @@ namespace SportsSocialNetwork.Services
             return await GetAsync(entity.Id);
         }
 
-        public async Task<PlaygroundViewModel> UpdateAsync(PlaygroundDtoModel model, long id)
+        public async Task<PlaygroundViewModel> UpdateAsync(PlaygroundDtoModel model, long id, string userId)
         {
             Playground entity = await _commonRepository.FindByCondition<Playground>(x => x.Id == id)
                 .Include(x => x.Sports).ThenInclude(x => x.Sport)
@@ -36,6 +37,7 @@ namespace SportsSocialNetwork.Services
             if (entity == null) return null;
 
             entity = Mapper.Map(model, entity);
+            entity.ApplicationUserId = userId;
 
              _commonRepository.Update(entity);
             await _commonRepository.SaveAsync();

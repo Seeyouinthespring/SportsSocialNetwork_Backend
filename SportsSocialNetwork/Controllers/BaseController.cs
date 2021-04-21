@@ -19,6 +19,11 @@ namespace SportsSocialNetwork.Controllers
             return TokenHelper.GetCurrentUserId(Request);
         }
 
+        internal async Task<string> GetCurrentUserRole()
+        {
+            return await TokenHelper.GetCurrentUserRole(Request);
+        }
+
         protected async Task<IActionResult> GetResultAsync<T>([NotNull] Func<Task<T>> getDataFunction)
         {
             T result = await getDataFunction();

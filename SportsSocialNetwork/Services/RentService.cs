@@ -30,18 +30,24 @@ namespace SportsSocialNetwork.Services
             return await GetAsync(entity.Id);
         }
 
-        public Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            await _commonRepository.DeleteAsync<RentRequest>(id);
+            await _commonRepository.SaveAsync();
         }
 
-        public async Task<List<RentRequestViewModel>> GetAllAsync()
+        public async Task<List<RentRequestViewModel>> GetAllAsync(string userId, long? playgroundId = null)
         {
-            List<RentRequest> entities = await _commonRepository.GetAll<RentRequest>()
+            IQueryable<RentRequest> query = _commonRepository.GetAll<RentRequest>()
                 .Include(x => x.Playground).ThenInclude(x => x.Sports).ThenInclude(x => x.Sport)
                 .Include(x => x.Renter)
-                .Include(x => x.Playground).ThenInclude(x => x.ResponsiblePerson)
-                .ToListAsync();
+                .Include(x => x.Playground).ThenInclude(x => x.ResponsiblePerson);
+            if (playgroundId != null)
+                query = query.Where(x => x.PlaygroundId == playgroundId);
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(x => x.Playground.ApplicationUserId == userId);
+
+                var entities = await query.ToListAsync();
 
             return entities.MapTo<List<RentRequestViewModel>>();
         }
@@ -57,6 +63,82 @@ namespace SportsSocialNetwork.Services
             if (entity == null) return null;
 
             return entity.MapTo<RentRequestViewModel>();
+        }
+
+        public async Task<List<RentRequestViewModel>> ApproveRentRequestAsync(long rentRequestId, string userId, DateTime currentDate)
+        {
+            RentRequest rentRequest = await _commonRepository.FindByCondition<RentRequest>(x => x.Id == rentRequestId)
+                .Include(x => x.Playground)
+                .FirstOrDefaultAsync();
+
+            List<ConfirmedRent> rentsToAdd = GenerateRentList(rentRequest, currentDate);
+
+            await _commonRepository.AddRangeAsync(rentsToAdd);
+            await _commonRepository.SaveAsync();
+            await DeleteAsync(rentRequestId);
+
+            return await GetAllAsync(userId);
+        }
+
+        private List<ConfirmedRent> GenerateRentList(RentRequest request, DateTime currentDate) 
+        {
+            List<ConfirmedRent> rents = new List<ConfirmedRent>();
+            if (request.IsOnce)
+            {
+                ConfirmedRent rent = FillRentFromRequest(request);
+                rents.Add(rent);
+                return rents;
+            }
+
+            DateTime startDate;
+            DayOfWeek currentDay = currentDate.DayOfWeek;
+            if ((byte)currentDay > request.DayOfTheWeek)
+                startDate = currentDate.AddDays(7 + (request.DayOfTheWeek.Value - (byte)currentDay));
+            else if ((byte)currentDay < request.DayOfTheWeek)
+                startDate = currentDate.AddDays(request.DayOfTheWeek.Value - (byte)currentDay);
+            else if(currentDate.AddHours(6).TimeOfDay >= request.StartTime)
+                startDate = currentDate.AddDays(7 + (request.DayOfTheWeek.Value - (byte)currentDay));
+            else
+                startDate = currentDate;
+
+            DateTime DateOfRent = startDate;
+            while (DateOfRent < request.Date.Value) 
+            {
+                ConfirmedRent rent = FillRentFromRequest(request, DateOfRent);
+                rents.Add(rent);
+                DateOfRent = DateOfRent.AddDays(7);
+            }
+            return rents;
+        }
+
+        private ConfirmedRent FillRentFromRequest(RentRequest request, DateTime? date = null) 
+        {
+            return new ConfirmedRent
+            {
+                IsOnce = request.IsOnce,
+                PlaygroundId = request.PlaygroundId,
+                Date = date ?? request.Date.Value,
+                StartTime = request.StartTime,
+                EndTime = request.EndTime,
+                RenterId = request.RenterId,
+                RenterName = request.Renter.FirstName + request.Renter.LastName,
+                IsExecuted = false,
+                Fee = request.Playground.PriceForOneHour.GetValueOrDefault() * (float)((request.EndTime.TotalMinutes - request.StartTime.TotalMinutes) / 60)
+            };
+        }
+
+        public async Task<List<RentViewModel>> GetAllRentsAsync(long playgroundId, DateTime? date = null, DateTime? startDate = null, DateTime? endDate = null) 
+        {
+            IQueryable<ConfirmedRent> query = _commonRepository.FindByCondition<ConfirmedRent>(x => x.PlaygroundId == playgroundId)
+               .Include(x => x.Playground).ThenInclude(x => x.Sports).ThenInclude(x => x.Sport)
+               .Include(x => x.Renter).ThenInclude(x => x.ContactInformation)
+               .Include(x => x.Playground).ThenInclude(x => x.ResponsiblePerson).ThenInclude(x => x.ContactInformation);
+
+            query = query.Where(x => startDate != null && endDate != null && x.Date >= startDate.Value && x.Date <= endDate.Value);
+            query = query.Where(x => date != null && x.Date == date.Value);
+
+            List<ConfirmedRent> entities = await query.ToListAsync();
+            return entities.MapTo<List<RentViewModel>>();
         }
     }
 }

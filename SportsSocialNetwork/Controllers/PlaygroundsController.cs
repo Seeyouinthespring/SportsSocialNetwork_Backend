@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SportsSocialNetwork.Attributes;
 using SportsSocialNetwork.Business.BusinessModels;
+using SportsSocialNetwork.Business.Constants;
 using SportsSocialNetwork.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -51,12 +52,15 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <param name="model">Playground Model</param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = UserRoles.LANDLORD +","+ UserRoles.ADMINISTRATOR)]
         [HttpPost]
         [SwaggerResponse200(typeof(PlaygroundViewModel))]
         public async Task<IActionResult> Create([FromBody]PlaygroundDtoModel model)
         {
-            return await GetResultAsync(() => _service.CreateAsync(model));
+            string userId = null;
+            if (await GetCurrentUserRole() == UserRoles.LANDLORD)
+                userId = GetCurrentUserId();
+            return await GetResultAsync(() => _service.CreateAsync(model, userId));
         }
         #endregion
 
@@ -67,12 +71,15 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="model">Playground Model</param>
         /// <param name="id">PlaygroundId. Example 2</param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Roles = UserRoles.LANDLORD + "," + UserRoles.ADMINISTRATOR)]
         [HttpPut("{id}")]
         [SwaggerResponse200(typeof(PlaygroundViewModel))]
-        public async Task<IActionResult> Update([FromBody] PlaygroundDtoModel model, long id)
+        public async Task<IActionResult> Update(PlaygroundDtoModel model, long id)
         {
-            return await GetResultAsync(() => _service.UpdateAsync(model, id));
+            string userId = null;
+            if (await GetCurrentUserRole() == UserRoles.LANDLORD)
+                userId = GetCurrentUserId();
+            return await GetResultAsync(() => _service.UpdateAsync(model, id, userId));
         }
         #endregion
 

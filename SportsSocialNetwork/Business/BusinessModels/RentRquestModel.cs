@@ -1,30 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace SportsSocialNetwork.Business.BusinessModels
 {
     public class RentRquestDtoModel
     {
         [Required]
-        public long? PlaygroundId { get; set; }
+        public long PlaygroundId { get; set; }
 
         [Required]
-        public bool? IsOnce { get; set; }
-
-        public int? DurationDays { get; set; }
+        public bool IsOnce { get; set; }
 
         public DateTime? Date { get; set; }
 
-        public byte DayOfTheWeek { get; set; }
+        public byte? DayOfTheWeek { get; set; }
 
         [Required]
-        public TimeSpan? StartTime { get; set; }
+        public TimeSpan StartTime { get; set; }
 
         [Required]
-        public TimeSpan? EndTime { get; set; }
+        public TimeSpan EndTime { get; set; }
 
         public string Description { get; set; }
     }
