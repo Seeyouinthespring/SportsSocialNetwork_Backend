@@ -12,5 +12,6 @@ namespace SportsSocialNetwork.Interfaces
         Task<List<ChatViewModel>> GetAllChatsAsync(string currentUserId);
         Task<ChatViewModel> AddMessageAsync(MessageDtoModel model, string receiverId, string currentUserId, DateTime currentDate);
         Task DeleteAsync(long id);
+        Task<MessageViewModel> GetMessageAsync(long id);
     }
 }

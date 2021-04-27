@@ -66,4 +66,19 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
         public ICollection<SportViewModel> SportsProvided { get; set; } 
     }
+
+    public class PlaygroundSummaryInfoViewModel : PlaygroundDtoModel
+    {
+        public ApplicationUserBaseViewModel ResponsiblePerson { get; set; }
+
+        public List<CommentViewModel> Comments { get; set; }
+
+        public ContactInformationViewModel Contacts { get; set; }
+
+        public ICollection<SportViewModel> SportsProvided { get; set; }
+
+        //public List<RentViewModel> ConfirmedRents { get; set; }
+
+        //public List<TimingIntervalModel> 
+    }
 }

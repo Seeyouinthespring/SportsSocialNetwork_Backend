@@ -150,6 +150,9 @@ namespace SportsSocialNetwork
             services.AddScoped<IAppointmentsService, AppointmentsService>();
             services.AddScoped<IRentService, RentService>();
             services.AddScoped<IMessagesService, MessagesService>();
+            services.AddScoped<ICommentsService, CommentsService>();
+            services.AddScoped<IContactInformationService, ContactInformationService>();
+            services.AddScoped<IPersonalActivityService, PersonalActivityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

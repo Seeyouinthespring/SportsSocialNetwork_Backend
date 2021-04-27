@@ -71,7 +71,9 @@ namespace SportsSocialNetwork.Services
                 .Include(x => x.Playground)
                 .FirstOrDefaultAsync();
 
-            List<ConfirmedRent> rentsToAdd = GenerateRentList(rentRequest, currentDate);
+            if (rentRequest == null) return null;
+
+            List<ConfirmedRent> rentsToAdd = await GenerateRentListAsync(rentRequest, currentDate);
 
             await _commonRepository.AddRangeAsync(rentsToAdd);
             await _commonRepository.SaveAsync();
@@ -80,7 +82,7 @@ namespace SportsSocialNetwork.Services
             return await GetAllAsync(userId);
         }
 
-        private List<ConfirmedRent> GenerateRentList(RentRequest request, DateTime currentDate) 
+        private async Task<List<ConfirmedRent>> GenerateRentListAsync(RentRequest request, DateTime currentDate) 
         {
             List<ConfirmedRent> rents = new List<ConfirmedRent>();
             if (request.IsOnce)
@@ -108,7 +110,27 @@ namespace SportsSocialNetwork.Services
                 rents.Add(rent);
                 DateOfRent = DateOfRent.AddDays(7);
             }
-            return rents;
+
+            if (await CheckGeneratedRentsConflictsAsync(rents, request.PlaygroundId, currentDate))
+                return rents;
+            return null;
+        }
+
+        private async Task<bool> CheckGeneratedRentsConflictsAsync(List<ConfirmedRent> rents, long playgroundId, DateTime currentDate) 
+        {
+            Playground playground = await _commonRepository.FindByIdAsync<Playground>(playgroundId);
+            if (rents.Any(x => x.StartTime < playground.OpenTime || x.EndTime > playground.CloseTime))
+                return false;
+
+            List<ConfirmedRent> currentRents = await _commonRepository.FindByCondition<ConfirmedRent>(x => x.PlaygroundId == playgroundId && x.Date >= currentDate)
+                .ToListAsync();
+
+            foreach (ConfirmedRent rent in rents) 
+                if (currentRents.Any(x => x.Date == rent.Date &&
+                        (x.StartTime >= rent.StartTime && x.StartTime <= rent.EndTime ||
+                        x.EndTime >= rent.StartTime && x.EndTime <= rent.EndTime)))
+                    return false;
+            return true;
         }
 
         private ConfirmedRent FillRentFromRequest(RentRequest request, DateTime? date = null) 

@@ -76,6 +76,19 @@ namespace SportsSocialNetwork
 
             CreateMap<Message, MessageViewModel>();
             CreateMap<MessageDtoModel, Message>();
+
+            CreateMap<Comment, CommentViewModel>();
+            CreateMap<CommentDtoModel, Comment>();
+
+            CreateMap<ContactInformation, ContactInformationViewModel>();
+            CreateMap<ContactInformationDtoModel, ContactInformation>();
+
+            CreateMap<Playground, PlaygroundSummaryInfoViewModel>()
+                .ForMember(dest => dest.Contacts, opt => opt.MapFrom(src => src.ContactInformation ?? src.ResponsiblePerson.ContactInformation))
+                .ForMember(dest => dest.SportsProvided, opt => opt.MapFrom(src => src.Sports.Select(x => x.Sport)));
+
+            CreateMap<PersonalActivity, PersonalActivityViewModel>();
+            CreateMap<PersonalActivityDtoModel, PersonalActivity>();
         }
     }
 }

@@ -114,5 +114,49 @@ namespace SportsSocialNetwork.Controllers
         }
         #endregion
 
+        #region Get Playground summary info 
+        /// <summary>
+        /// Get planned number of visitors on the playground
+        /// </summary>
+        /// <param name="id">Playground id. Example: 5</param>
+        /// <param name="date">Date. Example: 2021-02-02</param>
+        /// <param name="time">Time. Example: 19:00:00 </param>
+        /// <returns></returns>
+        [HttpGet("Visitors/{id}")]
+        [SwaggerResponse200(typeof(VisitorsNumberViewModel))]
+        public async Task<IActionResult> GetVisitorsNumber(long id, DateTime date, TimeSpan time)
+        {
+            return await GetResultAsync(() => _service.GetVisitorsNumberAsync(id, date, time));
+        }
+        #endregion
+
+        #region Get Free timings
+        /// <summary>
+        /// Get free for rent timings
+        /// </summary>
+        /// <param name="id">Playground id. Example: 5</param>
+        /// <param name="date">Date. Example: </param>
+        /// <returns></returns>
+        [HttpGet("{id}/Timings/{date}")]
+        [SwaggerResponse200(typeof(TimingIntervalModel))]
+        public async Task<IActionResult> GetFreeTimings(long id, DateTime date)
+        {
+            return await GetResultAsync(() => _service.GetFreeTimingsAsync(id, date));
+        }
+        #endregion
+
+        #region Get Playground summary info
+        /// <summary>
+        /// Get free for rent timings
+        /// </summary>
+        /// <param name="id">Playground id. Example: 5</param>
+        /// <returns></returns>
+        [HttpGet("{id}/SummaryInfo")]
+        [SwaggerResponse200(typeof(PlaygroundSummaryInfoViewModel))]
+        public async Task<IActionResult> GetSummaryInfo(long id)
+        {
+            return await GetResultAsync(() => _service.GetSummaryInfoAsync(id));
+        }
+        #endregion
     }
 }

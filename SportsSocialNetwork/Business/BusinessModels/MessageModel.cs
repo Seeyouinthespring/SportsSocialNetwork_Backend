@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace SportsSocialNetwork.Business.BusinessModels
 {
     public class MessageDtoModel
     {
+        [Required(AllowEmptyStrings = false)]
         public string Text { get; set; }
     }
 

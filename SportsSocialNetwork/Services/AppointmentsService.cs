@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SportsSocialNetwork.Business.BusinessModels;
+using SportsSocialNetwork.Business.Enums;
 using SportsSocialNetwork.DataBaseModels;
 using SportsSocialNetwork.Helpers;
 using SportsSocialNetwork.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SportsSocialNetwork.Services
@@ -26,6 +25,15 @@ namespace SportsSocialNetwork.Services
 
             entity.InitiatorId = userId;
             await _commonRepository.AddAsync(entity);
+            await _commonRepository.SaveAsync();
+
+            AppointmentVisiting visit = new AppointmentVisiting
+            {
+                AppointmentId = entity.Id,
+                MemberId = userId,
+                Status = (byte)VisitingStatus.ExactlyVisit
+            };
+            await _commonRepository.AddAsync(visit);
             await _commonRepository.SaveAsync();
 
             return await GetAsync(entity.Id);

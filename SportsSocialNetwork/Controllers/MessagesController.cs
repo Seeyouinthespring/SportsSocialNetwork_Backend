@@ -38,13 +38,16 @@ namespace SportsSocialNetwork.Controllers
         /// <summary>
         /// Get Chat with user
         /// </summary>
+        /// <param name="chatWithUserId">chatWithUserId. Example 2</param>
+        /// <param name="skip">number of skipped records. Example 20</param>
+        /// <param name="take">number of taken records. Example 20</param>
         /// <returns></returns>
         [Authorize]
         [HttpGet("{chatWithUserId}")]
         [SwaggerResponse200(typeof(ChatViewModel))]
-        public async Task<IActionResult> GetById(string chatWithUserID, [FromQuery] int skip = 0, [FromQuery] int take = 20)
+        public async Task<IActionResult> GetById(string chatWithUserId, [FromQuery] int skip = 0, [FromQuery] int take = 20)
         {
-            return await GetResultAsync(() => _service.GetChatAsync(GetCurrentUserId(), chatWithUserID, skip, take));
+            return await GetResultAsync(() => _service.GetChatAsync(GetCurrentUserId(), chatWithUserId, skip, take));
         }
         #endregion
 
@@ -76,19 +79,11 @@ namespace SportsSocialNetwork.Controllers
         [SwaggerResponseNoContent]
         public async Task<IActionResult> Delete(long id)
         {
-            // TODOOOO
-            //var appointment = await _service.GetAsync(id);
-            //var userId = GetCurrentUserId();
-            //if (userId != appointment.Initiator.Id)
-            //{
-            //    HttpContext.Response.StatusCode = 409;
-            //    return new JsonResult(new Response
-            //    {
-            //        Code = "DeletionProhibited",
-            //        Message = "У вас нет прав для удаления этой записи"
-            //    });
-            //}
+            var mesage = await _service.GetMessageAsync(id);
+            var userId = GetCurrentUserId();
 
+            if (mesage.SenderId != userId && mesage.ReceiverId != userId)
+                return GenerateErrorResponse(409, "DeletionProhibited", "У вас нет прав для удаления этой записи");
             await _service.DeleteAsync(id);
             return NoContent();
         }

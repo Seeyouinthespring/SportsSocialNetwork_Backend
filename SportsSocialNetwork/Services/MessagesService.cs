@@ -135,5 +135,12 @@ namespace SportsSocialNetwork.Services
             await _commonRepository.DeleteAsync<Message>(id);
             await _commonRepository.SaveAsync();
         }
+
+        public async Task<MessageViewModel> GetMessageAsync(long id)
+        {
+            Message entity = await _commonRepository.FindByIdAsync<Message>(id);
+            if (entity == null) return null;
+            return entity.MapTo<MessageViewModel>();
+        }
     }
 }
