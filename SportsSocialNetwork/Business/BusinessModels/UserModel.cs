@@ -18,6 +18,7 @@ namespace SportsSocialNetwork.Business.BusinessModels
         public string LastName { get; set; }
         public int Age { get; set; }
         public bool Gender { get; set; }
+        public string Photo { get; set; }
     }
 
     public class ApplicationUserVisitingViewModel : ApplicationUserBaseViewModel
@@ -34,5 +35,10 @@ namespace SportsSocialNetwork.Business.BusinessModels
     public class ApplicationUserLandlordViewModel : ApplicationUserBaseViewModel 
     {
         
+    }
+
+    public class PhotoModel 
+    {
+        public string Photo { get; set; }
     }
 }

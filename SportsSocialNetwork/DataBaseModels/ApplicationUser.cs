@@ -14,6 +14,8 @@ namespace SportsSocialNetwork.DataBaseModels
 
         public bool Gender { get; set; }
 
+        public byte[] Photo { get; set; }
+
         public virtual ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<Message> SentMessages { get; set; }
         public ContactInformation ContactInformation { get; set; }

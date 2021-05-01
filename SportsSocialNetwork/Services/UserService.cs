@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SportsSocialNetwork.Business.BusinessModels;
 using SportsSocialNetwork.DataBaseModels;
 using SportsSocialNetwork.Interfaces;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,6 +40,15 @@ namespace SportsSocialNetwork.Services
             if (entity == null)
                 return null;
             return entity;
+        }
+
+        public async Task UpdatePhotoAsync(PhotoModel model,string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            user.Photo = Convert.FromBase64String(model.Photo);
+
+            _commonRepository.Update(user);
+            await _commonRepository.SaveAsync();
         }
     }
 }

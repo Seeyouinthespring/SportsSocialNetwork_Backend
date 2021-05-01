@@ -30,7 +30,7 @@ namespace SportsSocialNetwork.DataBaseModels
 
         public DateTime? ClosedTill { get; set; }
 
-        public string Photo { get; set; }
+        public byte[] Photo { get; set; }
 
         public float? Square { get; set; }
 

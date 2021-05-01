@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using SportsSocialNetwork.Interfaces;
+using SportsSocialNetwork.Helpers;
 
 namespace SportsSocialNetwork.Controllers
 {
@@ -235,6 +236,19 @@ namespace SportsSocialNetwork.Controllers
                 UserName = user.UserName,
                 Password = model.Password
             });
+        }
+
+        /// <summary>
+        /// Update profile photo
+        /// </summary>
+        /// <param name="model">Photo file model</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("Photo")]
+        public async Task<IActionResult> UpdatePhoto(PhotoModel model) 
+        {
+            await _userService.UpdatePhotoAsync(model, TokenHelper.GetCurrentUserId(Request));
+            return NoContent();
         }
     }
 }

@@ -23,6 +23,7 @@ namespace SportsSocialNetwork
                 .ForMember(dest => dest.SportId, opt => opt.MapFrom(x => x));
 
             CreateMap<ApplicationUser, ApplicationUserBaseViewModel>()
+                .ForMember(dest => dest.Photo, src => src.MapFrom(x => x.Photo != null ? Convert.ToBase64String(x.Photo) : null))
                 .ForMember
                 (dest => dest.Age, opt => opt.MapFrom
                     (
@@ -58,6 +59,7 @@ namespace SportsSocialNetwork
             CreateMap<RentRquestDtoModel, RentRequest>();
 
             CreateMap<ApplicationUser, ApplicationUserRenterViewModel>()
+                .ForMember(dest => dest.Photo, src => src.MapFrom(x => x.Photo != null ? Convert.ToBase64String(x.Photo) : null))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
@@ -70,7 +72,8 @@ namespace SportsSocialNetwork
                         DateTime.Now.Year - src.DateOfBirth.Year
                 ));
 
-            CreateMap<ApplicationUser, ApplicationUserMessageViewModel>();
+            CreateMap<ApplicationUser, ApplicationUserMessageViewModel>()
+                .ForMember(dest => dest.Photo, src => src.MapFrom(x => x.Photo != null ? Convert.ToBase64String(x.Photo) : null));
 
             CreateMap<ConfirmedRent, RentViewModel>();
 
