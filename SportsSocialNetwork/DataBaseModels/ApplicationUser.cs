@@ -22,5 +22,6 @@ namespace SportsSocialNetwork.DataBaseModels
         public ICollection<RentRequest> RentRequests { get; set; }
         public ICollection<ConfirmedRent> ConfirmedRents { get; set; }
         public ICollection<AppointmentVisiting> VisitedAppointments { get; set; }
+        public ICollection<PersonalActivity> PersonalActivities { get; set; }
     }
 }

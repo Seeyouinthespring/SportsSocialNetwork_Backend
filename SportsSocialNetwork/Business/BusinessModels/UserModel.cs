@@ -1,8 +1,9 @@
 ﻿using SportsSocialNetwork.Business.Enums;
+using System.Collections.Generic;
 
 namespace SportsSocialNetwork.Business.BusinessModels
 {
-    public class ApplicationUserMessageViewModel 
+    public class ApplicationUserMessageViewModel
     {
         public string Id { get; set; }
         public string FirstName { get; set; }
@@ -32,13 +33,28 @@ namespace SportsSocialNetwork.Business.BusinessModels
         public long RentRequestId { get; set; }
     }
 
-    public class ApplicationUserLandlordViewModel : ApplicationUserBaseViewModel 
+    public class ApplicationUserLandlordViewModel : ApplicationUserBaseViewModel
     {
-        
+
     }
 
-    public class PhotoModel 
+    public class PhotoModel
     {
         public string Photo { get; set; }
+    }
+
+    public class ProfileViewModel : ApplicationUserBaseViewModel
+    {
+        public string PhoneNumber { get; set; }
+
+        public string Email { get; set; }
+
+        public string Vk { get; set; }
+
+        public string Instagram { get; set; }
+
+        public List<CommonActivityViewModel> LatestActivities { get; set; }
+
+        public List<CommonActivityViewModel> NearestActivities { get; set; }
     }
 }

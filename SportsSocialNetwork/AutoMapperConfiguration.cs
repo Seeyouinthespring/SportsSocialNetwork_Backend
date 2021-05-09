@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SportsSocialNetwork.Business.BusinessModels;
+using SportsSocialNetwork.Business.Enums;
 using SportsSocialNetwork.DataBaseModels;
 using System;
 using System.Linq;
@@ -92,6 +93,43 @@ namespace SportsSocialNetwork
 
             CreateMap<PersonalActivity, PersonalActivityViewModel>();
             CreateMap<PersonalActivityDtoModel, PersonalActivity>();
+
+            CreateMap<Playground, PlaygroundShortViewModel>()
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo != null ? Convert.ToBase64String(src.Photo) : null))
+                .ForMember(dest => dest.Sports, opt => opt.MapFrom(src => src.Sports.Select(x => x.Sport.Name)));
+
+            CreateMap<ConfirmedRent, CommonActivityViewModel>()
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name))
+                .ForMember(dest => dest.IsExecuted, opt => opt.MapFrom(src => src.IsExecuted))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => ActivityType.Rent));
+
+            CreateMap<PersonalActivity, CommonActivityViewModel>()
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name))
+                .ForMember(dest => dest.IsExecuted, opt => opt.MapFrom(src => src.IsVisited))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => ActivityType.PersonalActivity));
+
+            CreateMap<AppointmentVisiting, CommonActivityViewModel>()
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Appointment.Playground.Name))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Appointment.Date))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.Appointment.StartTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.Appointment.EndTime))
+                .ForMember(dest => dest.IsExecuted, opt => opt.MapFrom(src => src.Status == (byte)VisitingStatus.ExactlyVisit))
+                .ForMember(dest => dest.PlaygroundId, opt => opt.MapFrom(src => src.Appointment.PlaygroundId))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => ActivityType.Appointment));
+
+            CreateMap<ApplicationUser, ProfileViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo != null ? Convert.ToBase64String(src.Photo) : null))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom
+                    (
+                        src => src.DateOfBirth > DateTime.Now.AddYears(DateTime.Now.Year - src.DateOfBirth.Year) ?
+                        DateTime.Now.Year - src.DateOfBirth.Year - 1 :
+                        DateTime.Now.Year - src.DateOfBirth.Year
+                ))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.ContactInformation.PhoneNumber))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.ContactInformation.Email))
+                .ForMember(dest => dest.Vk, opt => opt.MapFrom(src => src.ContactInformation.Vk))
+                .ForMember(dest => dest.Instagram, opt => opt.MapFrom(src => src.ContactInformation.Instagram));
         }
     }
 }

@@ -81,4 +81,35 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
         //public List<TimingIntervalModel> 
     }
+
+    public class PlaygroundShortViewModel 
+    {
+        public long Id { get; set; }
+
+        public bool IsCommercial { get; set; }
+
+        public int? PriceForOneHour { get; set; }
+
+        public string City { get; set; }
+
+        public string Street { get; set; }
+
+        public string HouseNumber { get; set; }
+
+        //public double Latitude { get; set; }
+
+        //public double Longitude { get; set; }
+
+        public string Photo { get; set; }
+
+        public TimeSpan? OpenTime { get; set; }
+
+        public TimeSpan? CloseTime { get; set; }
+
+        public string[] Sports { get; set; }
+
+        public TypeOfCovering CoveringType { get; set; }
+
+        public string Name { get; set; }
+    }
 }

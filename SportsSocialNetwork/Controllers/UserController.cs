@@ -16,12 +16,15 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using SportsSocialNetwork.Interfaces;
 using SportsSocialNetwork.Helpers;
+using SportsSocialNetwork.Attributes;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace SportsSocialNetwork.Controllers
 {
     [Route("api/Users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
@@ -247,8 +250,44 @@ namespace SportsSocialNetwork.Controllers
         [Route("Photo")]
         public async Task<IActionResult> UpdatePhoto(PhotoModel model) 
         {
-            await _userService.UpdatePhotoAsync(model, TokenHelper.GetCurrentUserId(Request));
+            await _userService.UpdatePhotoAsync(model, GetCurrentUserId());
             return NoContent();
+        }
+
+        /// <summary>
+        /// Update profile photo
+        /// </summary>
+        /// <param name="file">Photo file</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("PhotoFile")]
+        public async Task<IActionResult> UpdatePhotoFile([FromQuery][Required] IFormFile file)
+        {
+            byte[] fileBytes;
+            //string userId = null;
+            //if (await GetCurrentUserRole() == UserRoles.LANDLORD)
+            //    userId = GetCurrentUserId();
+            using (var ms = new MemoryStream())
+            {
+                file.CopyTo(ms);
+                fileBytes = ms.ToArray();
+            }
+
+            await _userService.UpdatePhotoAsync(fileBytes, GetCurrentUserId());
+            return Ok();
+        }
+
+        /// <summary>
+        /// Update profile photo
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet]
+        [Route("Profile")]
+        [SwaggerResponse200(typeof(ProfileViewModel))]
+        public async Task<IActionResult> GetProfile()
+        {
+            return await GetResultAsync(() => _userService.GetProfileAsync(GetCurrentUserId(), GetCurrentDate()));
         }
     }
 }

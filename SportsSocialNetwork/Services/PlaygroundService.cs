@@ -146,5 +146,54 @@ namespace SportsSocialNetwork.Services
 
             return new VisitorsNumberViewModel { Number = number };
         }
+
+        public async Task<List<PlaygroundShortViewModel>> GetAllShortModelsAsync(PlaygroundQueryModel queryModel)
+        {
+            string search = queryModel.Search?.ToUpper();
+            List<Playground> playgrounds = await _commonRepository.FindByCondition<Playground>(x => x.IsApproved)
+                
+                .Include(x => x.Sports).ThenInclude(x => x.Sport)
+                //.Select(x => new Playground
+                //{
+                //    Id = x.Id,
+                //    Latitude = x.Latitude,
+                //    Longitude = x.Longitude,
+                //    IsApproved = x.IsApproved,
+                //    IsCommercial = x.IsCommercial,
+                //    CoveringType = x.CoveringType,
+                //    City = x.City,
+                //    Street = x.Street,
+                //    HouseNumber = x.HouseNumber,
+                //    OpenTime = x.OpenTime,
+                //    CloseTime = x.CloseTime,
+                //    Photo = x.Photo,
+                //    PriceForOneHour = x.PriceForOneHour,
+                //    Sports = x.Sports.Select(y => new PlaygroundSportConnection
+                //    {
+                //        Sport = new Sport
+                //        {
+                //            Name = y.Sport.Name,
+                //            Id = y.Sport.Id
+                //        }
+                //    }).ToList()
+                //})
+                .Where(x => 
+                    (string.IsNullOrEmpty(queryModel.Search) || x.Name.ToUpper().Contains(search) || x.City.ToUpper().Contains(search) || x.Street.ToUpper().Contains(search)) &&
+                    (queryModel.IsCommercial == null || x.IsCommercial == queryModel.IsCommercial) &&
+                    (string.IsNullOrEmpty(queryModel.Sport) || x.Sports.Any(x => x.Sport.Name == queryModel.Sport)) &&
+                    (queryModel.TypeOfCovering == null || x.CoveringType == (byte)queryModel.TypeOfCovering))
+                .Skip(queryModel?.Skip ?? 0).Take(queryModel?.Take ?? 20)
+                .ToListAsync();
+
+            return playgrounds.MapTo<List<PlaygroundShortViewModel>>();
+        }
+
+        public async Task UpdatePhotoAsync(byte[] fileBytes, long playgroundId) 
+        {
+            Playground entity = await _commonRepository.FindByIdAsync<Playground>(playgroundId);
+            entity.Photo = fileBytes;
+            _commonRepository.Update(entity);
+            await _commonRepository.SaveAsync();
+        }
     }
 }

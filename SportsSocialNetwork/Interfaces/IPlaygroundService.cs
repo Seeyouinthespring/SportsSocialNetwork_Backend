@@ -1,4 +1,5 @@
 ﻿using SportsSocialNetwork.Business.BusinessModels;
+using SportsSocialNetwork.Business.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,5 +18,20 @@ namespace SportsSocialNetwork.Interfaces
         Task<PlaygroundSummaryInfoViewModel> GetSummaryInfoAsync(long id);
         Task<List<TimingIntervalModel>> GetFreeTimingsAsync(long id, DateTime date);
         Task<VisitorsNumberViewModel> GetVisitorsNumberAsync(long id, DateTime date, TimeSpan time);
+
+        Task<List<PlaygroundShortViewModel>> GetAllShortModelsAsync(PlaygroundQueryModel queryModel);
+
+        Task UpdatePhotoAsync(byte[] fileBytes, long playgroundId);
+    }
+
+    public class PlaygroundQueryModel : SkipTakeRequestParamsModel
+    {
+        public bool? IsCommercial { get; set; }
+
+        public string Sport { get; set; }
+
+        public TypeOfCovering? TypeOfCovering {get; set;}
+
+        public string Search { get; set; }
     }
 }

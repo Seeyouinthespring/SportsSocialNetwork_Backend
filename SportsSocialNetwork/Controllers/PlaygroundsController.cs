@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SportsSocialNetwork.Attributes;
 using SportsSocialNetwork.Business.BusinessModels;
@@ -6,6 +7,8 @@ using SportsSocialNetwork.Business.Constants;
 using SportsSocialNetwork.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SportsSocialNetwork.Controllers
@@ -20,11 +23,24 @@ namespace SportsSocialNetwork.Controllers
             _service = service;
         }
 
+        #region GetAll SHortModel 
+        /// <summary>
+        /// Get all Playgrounds short models
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Short")]
+        [SwaggerResponse200(typeof(List<PlaygroundShortViewModel>))]
+        public async Task<IActionResult> GetShortModels(PlaygroundQueryModel queryModel)
+        {
+            return await GetResultAsync(() => _service.GetAllShortModelsAsync(queryModel));
+        }
+        #endregion
+
         #region GetAll 
         /// <summary>
         /// Get all Playgrounds
         /// </summary>
-        /// <returns></returns>
+        /// <returns> List of short playground models</returns>
         [HttpGet]
         [SwaggerResponse200(typeof(List<PlaygroundViewModel>))]
         public async Task<IActionResult> Get()
@@ -138,7 +154,7 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="date">Date. Example: </param>
         /// <returns></returns>
         [HttpGet("{id}/Timings/{date}")]
-        [SwaggerResponse200(typeof(TimingIntervalModel))]
+        [SwaggerResponse200(typeof(List<TimingIntervalModel>))]
         public async Task<IActionResult> GetFreeTimings(long id, DateTime date)
         {
             return await GetResultAsync(() => _service.GetFreeTimingsAsync(id, date));
@@ -156,6 +172,33 @@ namespace SportsSocialNetwork.Controllers
         public async Task<IActionResult> GetSummaryInfo(long id)
         {
             return await GetResultAsync(() => _service.GetSummaryInfoAsync(id));
+        }
+        #endregion
+
+        #region Update photo
+        /// <summary>
+        /// Update Playground
+        /// </summary>
+        /// <param name="id">PlaygroundId. Example 2</param>
+        /// /// <param name="file">Photo file. Example 2</param>
+        /// <returns></returns>
+        //[Authorize(Roles = UserRoles.LANDLORD + "," + UserRoles.ADMINISTRATOR)]
+        [HttpPut("{id}/Photo")]
+        [SwaggerResponse200(typeof(PlaygroundViewModel))]
+        public async Task<IActionResult> Update([FromQuery][Required]IFormFile file, long id)
+        {
+            byte[] fileBytes;
+            //string userId = null;
+            //if (await GetCurrentUserRole() == UserRoles.LANDLORD)
+            //    userId = GetCurrentUserId();
+            using (var ms = new MemoryStream()) 
+            {
+                file.CopyTo(ms);
+                fileBytes = ms.ToArray();
+            }
+
+            await _service.UpdatePhotoAsync(fileBytes, id);
+            return Ok();
         }
         #endregion
     }

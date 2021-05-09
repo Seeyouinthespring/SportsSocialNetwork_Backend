@@ -35,4 +35,12 @@ namespace SportsSocialNetwork.Business.Enums
         ExactlyVisit = 1,
     }
 
+    [JsonConverter(typeof(StringToEnumConverter))]
+    public enum ActivityType : byte
+    {
+        Rent = 0,
+        Appointment = 1,
+        PersonalActivity = 2,
+    }
+
 }
