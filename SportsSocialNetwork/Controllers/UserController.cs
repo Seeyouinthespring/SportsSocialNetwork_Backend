@@ -289,5 +289,39 @@ namespace SportsSocialNetwork.Controllers
         {
             return await GetResultAsync(() => _userService.GetProfileAsync(GetCurrentUserId(), GetCurrentDate()));
         }
+
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
+        // WRONG CODE
     }
 }
