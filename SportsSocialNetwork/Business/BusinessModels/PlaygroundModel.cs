@@ -71,7 +71,7 @@ namespace SportsSocialNetwork.Business.BusinessModels
     {
         public ApplicationUserBaseViewModel ResponsiblePerson { get; set; }
 
-        public List<CommentViewModel> Comments { get; set; }
+        //public List<CommentViewModel> Comments { get; set; }
 
         public ContactInformationViewModel Contacts { get; set; }
 

@@ -93,7 +93,6 @@ namespace SportsSocialNetwork.Services
             Playground entity = await _commonRepository.FindByCondition<Playground>(x => x.Id == id)
                 .Include(x => x.ResponsiblePerson).ThenInclude(x => x.ContactInformation)
                 .Include(x => x.ContactInformation)
-                .Include(x => x.Comments).ThenInclude(x => x.Author)
                 .Include(x => x.Sports).ThenInclude(x => x.Sport)
                 .FirstOrDefaultAsync();
             if (entity == null) return null;

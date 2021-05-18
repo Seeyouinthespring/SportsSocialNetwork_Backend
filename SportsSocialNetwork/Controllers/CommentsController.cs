@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SportsSocialNetwork.Controllers
 {
-    [Route("Comment")]
+    [Route("api/Comment")]
     public class CommentsController : BaseController
     {
         private readonly ICommentsService _service;
@@ -26,7 +26,7 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="skip">number of skipped records. Example 20</param>
         /// <param name="take">number of taken records. Example 20</param>
         /// <returns></returns>
-        [HttpGet("playgroundId")]
+        [HttpGet("{playgroundId}")]
         [SwaggerResponse200(typeof(List<CommentViewModel>))]
         public async Task<IActionResult> Get(long playgroundId, int skip = 0, int take = 20)
         {
@@ -42,7 +42,7 @@ namespace SportsSocialNetwork.Controllers
         /// <param name="playgroundId">PlaygroundId. Example 2</param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("playgroundId")]
+        [HttpPost("{playgroundId}")]
         [SwaggerResponse200(typeof(CommentViewModel))]
         public async Task<IActionResult> Create([FromBody] CommentDtoModel model, long playgroundId)
         {

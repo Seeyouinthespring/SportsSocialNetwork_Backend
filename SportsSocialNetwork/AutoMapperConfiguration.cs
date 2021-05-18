@@ -88,6 +88,7 @@ namespace SportsSocialNetwork
             CreateMap<ContactInformationDtoModel, ContactInformation>();
 
             CreateMap<Playground, PlaygroundSummaryInfoViewModel>()
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo != null ? Convert.ToBase64String(src.Photo) : null))
                 .ForMember(dest => dest.Contacts, opt => opt.MapFrom(src => src.ContactInformation ?? src.ResponsiblePerson.ContactInformation))
                 .ForMember(dest => dest.SportsProvided, opt => opt.MapFrom(src => src.Sports.Select(x => x.Sport)));
 

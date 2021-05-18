@@ -52,25 +52,12 @@ namespace SportsSocialNetwork.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
-            //var user = await _userService.GetUserByNameAsync(model.UserName);
+
             if (user == null || await userManager.CheckPasswordAsync(user, model.Password) == false)
-            {
-                HttpContext.Response.StatusCode = 401;
-                return new JsonResult(new Response
-                {
-                    Code = "Unauthorized",
-                    Message = "You have entred incorrect data"
-                });
-            }
+                return GenerateErrorResponse(401, "Unauthorized", "Вы ввели некорректные данные");
             if (user.LockoutEnd != null || user.LockoutEnd >= DateTime.Today)
-            {
-                HttpContext.Response.StatusCode = 409;
-                return new JsonResult(new Response
-                {
-                    Code = "Unauthorized",
-                    Message = @$"Your account has been locked: {((TimeSpan)(user.LockoutEnd - DateTime.Today)).TotalDays } days left"
-                });
-            }
+                return GenerateErrorResponse(401, "Unauthorized", @$"Your account has been locked: {((TimeSpan)(user.LockoutEnd - DateTime.Today)).TotalDays } days left");
+
             var userRoles = await userManager.GetRolesAsync(user);
 
             var authClaims = new List<Claim>
@@ -94,16 +81,10 @@ namespace SportsSocialNetwork.Controllers
 
             return Ok(new
             {
+                photo = user.Photo,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
             });
-
-            //var result = user.MapTo<ApplicationUserEnterViewModel>();
-            //result.Expiration = token.ValidTo;
-            //result.Token = new JwtSecurityTokenHandler().WriteToken(token);
-            //result.Role = userRoles.First();
-
-            //return Ok(result);
         }
 
         /// <summary>
