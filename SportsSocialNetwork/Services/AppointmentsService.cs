@@ -5,8 +5,10 @@ using SportsSocialNetwork.Business.Enums;
 using SportsSocialNetwork.DataBaseModels;
 using SportsSocialNetwork.Helpers;
 using SportsSocialNetwork.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SportsSocialNetwork.Services
 {
@@ -87,6 +89,41 @@ namespace SportsSocialNetwork.Services
             await _commonRepository.DeleteAsync<Appointment>(id);
 
             await _commonRepository.SaveAsync();
+        }
+
+        public async Task<List<AppointmentShortViewModel>> GetForPlaygroundAsync(long id, DateTime currentDate)
+        {
+            var entities = await _commonRepository.FindByCondition<Appointment>(x =>
+                x.PlaygroundId == id && x.Date >= currentDate.Date && x.StartTime >= currentDate.TimeOfDay)
+                .Take(10)
+                .Select(x => new Appointment
+                {
+                    Id = x.Id,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    Date = x.Date,
+                    ParticipantsQuantity = x.ParticipantsQuantity,
+                    Playground = new Playground
+                    {
+                        Name = x.Playground.Name,
+                        City = x.Playground.City,
+                        Street = x.Playground.Street,
+                        HouseNumber = x.Playground.HouseNumber
+                    },
+                    Initiator = new ApplicationUser
+                    {
+                        FirstName = x.Initiator.FirstName,
+                        LastName = x.Initiator.LastName,
+                    },
+                    Visits = x.Visits.Select(y => new AppointmentVisiting 
+                    {
+                        Id = y.Id
+                    }).ToList()
+                })
+                .OrderBy(x => x.Date)
+                .ToListAsync();
+
+            return entities.MapTo<List<AppointmentShortViewModel>>();
         }
     }
 }

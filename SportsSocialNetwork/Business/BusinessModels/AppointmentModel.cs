@@ -28,4 +28,17 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
         public ApplicationUserBaseViewModel Initiator { get; set; }
     }
+
+    public class AppointmentShortViewModel : AppointmentDtoModel 
+    { 
+        public long Id { get; set; }
+        public string InitiatorFirstName { get; set; }
+        public string InitiatorLastName { get; set; }
+        public string PlaygroundName { get; set; }
+        public string City { get; set; }
+        public string Street { get; set; }
+        public string HouseNumber { get; set; }
+        public string Sport { get; set; }
+        public int CurrentVisitors { get; set; }
+    }
 }

@@ -131,6 +131,16 @@ namespace SportsSocialNetwork
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.ContactInformation.Email))
                 .ForMember(dest => dest.Vk, opt => opt.MapFrom(src => src.ContactInformation.Vk))
                 .ForMember(dest => dest.Instagram, opt => opt.MapFrom(src => src.ContactInformation.Instagram));
+
+            CreateMap<Appointment, AppointmentShortViewModel>()
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Playground.City))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Playground.Street))
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Playground.HouseNumber))
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name))
+                .ForMember(dest => dest.InitiatorFirstName, opt => opt.MapFrom(src => src.Initiator.FirstName))
+                .ForMember(dest => dest.InitiatorLastName, opt => opt.MapFrom(src => src.Initiator.LastName))
+                .ForMember(dest => dest.Sport, opt => opt.MapFrom(src => src.Sport.Name))
+                .ForMember(dest => dest.CurrentVisitors, opt => opt.MapFrom(src => src.Visits.Count()));
         }
     }
 }

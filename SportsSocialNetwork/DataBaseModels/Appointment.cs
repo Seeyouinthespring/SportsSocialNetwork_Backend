@@ -22,6 +22,10 @@ namespace SportsSocialNetwork.DataBaseModels
 
         public string Description { get; set; }
 
+        [ForeignKey(nameof(Sport))]
+        public long SportId { get; set; }
+        public Sport Sport { get; set; }
+
         public ICollection<AppointmentVisiting> Visits { get; set; }
     }
 }

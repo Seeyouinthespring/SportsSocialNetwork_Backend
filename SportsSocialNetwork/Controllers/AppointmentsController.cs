@@ -32,6 +32,20 @@ namespace SportsSocialNetwork.Controllers
         }
         #endregion
 
+        #region Get appointments for playground
+        /// <summary>
+        /// Get all Appointments
+        /// </summary>
+        /// <param name="id">Playground Id. Example 2</param>
+        /// <returns></returns>
+        [HttpGet("Playground/{id}")]
+        [SwaggerResponse200(typeof(List<AppointmentShortViewModel>))]
+        public async Task<IActionResult> GetForPlayground(long id)
+        {
+            return await GetResultAsync(() => _service.GetForPlaygroundAsync(id, GetCurrentDate()));
+        }
+        #endregion
+
         #region Get by id
         /// <summary>
         /// Get Appointment by id
