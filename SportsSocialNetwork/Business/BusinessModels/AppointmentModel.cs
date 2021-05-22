@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SportsSocialNetwork.Business.BusinessModels
 {
     public class AppointmentDtoModel
     {
-        public DateTime Date { get; set; }
+        [Required]
+        public DateTime? Date { get; set; }
 
-        public TimeSpan StartTime { get; set; }
+        [Required]
+        public TimeSpan? StartTime { get; set; }
 
-        public TimeSpan EndTime { get; set; }
+        [Required]
+        public TimeSpan? EndTime { get; set; }
 
-        public long PlaygroundId { get; set; }
-        
-        public int ParticipantsQuantity { get; set; }
+        [Required]
+        public long? PlaygroundId { get; set; }
+
+        [Required]
+        public int? ParticipantsQuantity { get; set; }
 
         public string Description { get; set; }
+
+        [Required]
+        public long? SportId { get; set; }
     }
 
     public class AppointmentViewModel : AppointmentDtoModel

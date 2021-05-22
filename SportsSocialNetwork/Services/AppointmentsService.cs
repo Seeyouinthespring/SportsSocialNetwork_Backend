@@ -23,6 +23,8 @@ namespace SportsSocialNetwork.Services
 
         public virtual async Task<AppointmentViewModel> CreateAsync(AppointmentDtoModel model, string userId)
         {
+            //чекнуть площадку на то что она муниципальная
+
             var entity = model.MapTo<Appointment>();
 
             entity.InitiatorId = userId;
@@ -94,7 +96,7 @@ namespace SportsSocialNetwork.Services
         public async Task<List<AppointmentShortViewModel>> GetForPlaygroundAsync(long id, DateTime currentDate)
         {
             var entities = await _commonRepository.FindByCondition<Appointment>(x =>
-                x.PlaygroundId == id && x.Date >= currentDate.Date && x.StartTime >= currentDate.TimeOfDay)
+                x.PlaygroundId == id && x.Date >= currentDate.Date && (x.Date == currentDate && x.StartTime >= currentDate.TimeOfDay || x.Date != currentDate))
                 .Take(10)
                 .Select(x => new Appointment
                 {
@@ -114,6 +116,10 @@ namespace SportsSocialNetwork.Services
                     {
                         FirstName = x.Initiator.FirstName,
                         LastName = x.Initiator.LastName,
+                    },
+                    Sport = new Sport 
+                    {
+                        Name = x.Sport.Name
                     },
                     Visits = x.Visits.Select(y => new AppointmentVisiting 
                     {
