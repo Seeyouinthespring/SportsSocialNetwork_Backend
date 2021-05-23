@@ -5,9 +5,18 @@ using System.Threading.Tasks;
 
 namespace SportsSocialNetwork.Interfaces
 {
+    public enum AppointmentAdditingError 
+    {
+        WrongSport,
+        WrongPlayground,
+        WrongTimeInterval,
+        DuplicateAppointment,
+        Ok
+    }
+
     public interface IAppointmentsService
     {
-        Task<AppointmentViewModel> CreateAsync(AppointmentDtoModel model, string userId);
+        Task<AppointmentAdditingError> CreateAsync(AppointmentDtoModel model, string userId);
         Task<AppointmentViewModel> UpdateAsync(AppointmentDtoModel model, long id, string userId);
         Task<List<AppointmentViewModel>> GetAllAsync(string search = null);
 

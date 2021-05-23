@@ -71,7 +71,17 @@ namespace SportsSocialNetwork.Controllers
         public async Task<IActionResult> Create([FromBody] AppointmentDtoModel model)
         {
             string userId = GetCurrentUserId();
-            return await GetResultAsync(() => _service.CreateAsync(model, userId));
+
+            AppointmentAdditingError result = await _service.CreateAsync(model, userId);
+            return (result) switch
+            {
+                AppointmentAdditingError.WrongSport => GenerateErrorResponse(409, "wrongSport", "Выбраный спорт не подход для данной площадки"),
+                AppointmentAdditingError.WrongPlayground => GenerateErrorResponse(409, "wrongPlayground", "Данное действие нельзя совершить для коммерческой площадки"),
+                AppointmentAdditingError.WrongTimeInterval => GenerateErrorResponse(409, "wrongTimings", "Нельзя назначить активность в этот период времени"),
+                AppointmentAdditingError.DuplicateAppointment => GenerateErrorResponse(409, "DuplicateAppointment", "У вас уже есть запланированная встреча на это время"),
+                AppointmentAdditingError.Ok => Ok(),
+                _ => Ok(),
+            };
         }
         #endregion
 

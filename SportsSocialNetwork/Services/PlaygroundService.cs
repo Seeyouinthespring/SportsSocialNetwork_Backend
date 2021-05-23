@@ -103,7 +103,7 @@ namespace SportsSocialNetwork.Services
         public async Task<List<TimingIntervalModel>> GetFreeTimingsAsync(long id, DateTime date)
         {
             List<ConfirmedRent> rents = await _commonRepository.FindByCondition<ConfirmedRent>(x => x.PlaygroundId == id && 
-                    x.Date == date && 
+                    x.Date.Date == date && 
                     x.Playground.ClosedTill == null && 
                     x.Playground.IsApproved && 
                     x.Playground.IsCommercial)
@@ -111,7 +111,17 @@ namespace SportsSocialNetwork.Services
                 .OrderBy(x => x.StartTime)
                 .ToListAsync();
 
-            if (rents == null || !rents.Any()) return null;
+            if (rents == null || !rents.Any()) 
+            {
+                var playground = await _commonRepository.FindByIdAsync<Playground>(id);
+                List<TimingIntervalModel> result = new List<TimingIntervalModel>();
+                result.Add(new TimingIntervalModel 
+                {
+                    StartTime = playground.OpenTime ?? new TimeSpan(0,1,0),
+                    EndTime = playground.CloseTime ?? new TimeSpan(23,59,0)
+                });
+                return result;
+            }
 
             TimeSpan open = rents.First().Playground.OpenTime.Value;
             TimeSpan close = rents.First().Playground.CloseTime.Value;

@@ -21,9 +21,32 @@ namespace SportsSocialNetwork.Services
             _commonRepository = commonRepository;
         }
 
-        public virtual async Task<AppointmentViewModel> CreateAsync(AppointmentDtoModel model, string userId)
+        public virtual async Task<AppointmentAdditingError> CreateAsync(AppointmentDtoModel model, string userId)
         {
             //чекнуть площадку на то что она муниципальная
+
+            var playground = await _commonRepository.FindByCondition<Playground>(x => x.Id == model.PlaygroundId)
+                .Include(x => x.Sports)
+                .ThenInclude(x => x.Sport)
+                .FirstOrDefaultAsync();
+
+            if (playground.IsCommercial)
+                return AppointmentAdditingError.WrongPlayground;
+            if (!playground.Sports.Select(x => x.SportId).ToList().Contains(model.SportId.Value))
+                return AppointmentAdditingError.WrongSport;
+            if (model.EndTime <= model.StartTime)
+                return AppointmentAdditingError.WrongTimeInterval;
+            if (playground.OpenTime != null && (playground.OpenTime > model.StartTime || playground.CloseTime < model.EndTime))
+                return AppointmentAdditingError.WrongTimeInterval;
+
+            var visits = await _commonRepository.FindByCondition<AppointmentVisiting>(x => x.MemberId == userId)
+                .Include(x => x.Appointment)
+                .ToListAsync();
+
+            if (visits.Any(x => x.Appointment.Date.Date == model.Date.Value &&
+                ((x.Appointment.StartTime >= model.StartTime && x.Appointment.StartTime <= model.EndTime) ||
+                (x.Appointment.EndTime >= model.StartTime && x.Appointment.EndTime <= model.StartTime))))
+                return AppointmentAdditingError.DuplicateAppointment;
 
             var entity = model.MapTo<Appointment>();
 
@@ -40,7 +63,7 @@ namespace SportsSocialNetwork.Services
             await _commonRepository.AddAsync(visit);
             await _commonRepository.SaveAsync();
 
-            return await GetAsync(entity.Id);
+            return AppointmentAdditingError.Ok;
         }
 
         public async Task<AppointmentViewModel> UpdateAsync(AppointmentDtoModel model, long id, string userId)
