@@ -44,8 +44,10 @@ namespace SportsSocialNetwork.Services
                 .ToListAsync();
 
             if (visits.Any(x => x.Appointment.Date.Date == model.Date.Value &&
-                ((x.Appointment.StartTime >= model.StartTime && x.Appointment.StartTime <= model.EndTime) ||
-                (x.Appointment.EndTime >= model.StartTime && x.Appointment.EndTime <= model.StartTime))))
+                ((x.Appointment.StartTime == model.StartTime) ||
+                (x.Appointment.EndTime == model.EndTime) ||
+                (x.Appointment.StartTime < model.StartTime && x.Appointment.EndTime > model.StartTime) ||
+                (x.Appointment.StartTime < model.EndTime && x.Appointment.EndTime > model.EndTime))))
                 return AppointmentAdditingError.DuplicateAppointment;
 
             var entity = model.MapTo<Appointment>();

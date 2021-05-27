@@ -8,11 +8,12 @@ namespace SportsSocialNetwork.Business.BusinessModels
         [Required(ErrorMessage = "User Name is required")]
         public string UserName { get; set; }
 
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Неверный формат адреса электронной почты")]
         [Required(ErrorMessage = "Email is required")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
+        [RegularExpression("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", ErrorMessage ="Длина пароля должна быть от 8 до 16 символов, он должен содержать буквы разных регистров, цифры, знаки препинания")]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "FirstNAme is required")]

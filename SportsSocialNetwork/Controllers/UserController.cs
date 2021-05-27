@@ -98,24 +98,11 @@ namespace SportsSocialNetwork.Controllers
         {
             var userExists = await userManager.FindByNameAsync(model.UserName);
             if (userExists != null)
-            {
-                HttpContext.Response.StatusCode = 409;
-                return new JsonResult(new Response
-                {
-                    Code = "Conflict",
-                    Message = "Such UserName has been already taken!"
-                });
-            }
+                return GenerateErrorResponse(409, "NotUniqueUsername", "Пользователь с таким ником уже зарегистрирован");
+
             userExists = await userManager.FindByEmailAsync(model.Email);
             if (userExists != null)
-            {
-                HttpContext.Response.StatusCode = 409;
-                return new JsonResult(new Response
-                {
-                    Code = "Conflict",
-                    Message = "Such Email has been already taken!"
-                });
-            }
+                return GenerateErrorResponse(409, "NotUniqueEmail", "Пользователь с таким email уже зарегистрирован");
 
             if (!await roleManager.RoleExistsAsync(UserRoles.SPORTSMAN))
                 await roleManager.CreateAsync(new IdentityRole(UserRoles.SPORTSMAN));
@@ -129,23 +116,13 @@ namespace SportsSocialNetwork.Controllers
                 UserName = model.UserName,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                //FullName = model.FullName,
                 Gender = model.Gender,
                 DateOfBirth = model.DateOfBirth,
-                //CreatedDate = GetCurrentDate(),
-                //RoleId = role.Id
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-            {
-                HttpContext.Response.StatusCode = 400;
-                return new JsonResult(new Response
-                {
-                    Code = "BadReques",
-                    Message = "User creation failed! Please check input data"
-                });
-            }
+                return GenerateErrorResponse(404, "UnexpectedError", "Извините, что-то пошло не так");
 
             if (await roleManager.RoleExistsAsync(model.Role))
                 await userManager.AddToRoleAsync(user, model.Role);
