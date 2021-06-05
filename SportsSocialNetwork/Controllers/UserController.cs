@@ -48,6 +48,7 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <returns></returns>
         //[Swagger200(typeof(ApplicationUserEnterViewModel))]
+        [SwaggerResponseNotFound]
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {

@@ -49,5 +49,6 @@ namespace SportsSocialNetwork.Business.BusinessModels
         public string HouseNumber { get; set; }
         public string Sport { get; set; }
         public int CurrentVisitors { get; set; }
+        public bool Participation { get; set; }
     }
 }

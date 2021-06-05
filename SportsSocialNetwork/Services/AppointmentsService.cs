@@ -23,7 +23,6 @@ namespace SportsSocialNetwork.Services
 
         public virtual async Task<AppointmentAdditingError> CreateAsync(AppointmentDtoModel model, string userId)
         {
-            //чекнуть площадку на то что она муниципальная
 
             var playground = await _commonRepository.FindByCondition<Playground>(x => x.Id == model.PlaygroundId)
                 .Include(x => x.Sports)
@@ -87,15 +86,15 @@ namespace SportsSocialNetwork.Services
             return await GetAsync(entity.Id);
         }
 
-        public async Task<List<AppointmentViewModel>> GetAllAsync(string search = null)
+        public async Task<List<AppointmentShortViewModel>> GetAllAsync(bool? isActual, int? sportId, int? playgroundId, string userId, DateTime currentDate)
         {
-            List<Appointment> entities = await _commonRepository.GetAll<Appointment>()
-                .Include(x => x.Initiator)
-                .Include(x => x.Visits).ThenInclude(x => x.Member)
-                .Include(x => x.Playground).ThenInclude(x => x.Sports).ThenInclude(x => x.Sport)
+            var entities = await _commonRepository.FindByCondition<Appointment>(x => 
+                (playgroundId == null || x.PlaygroundId == playgroundId.Value) &&
+                (sportId == null || x.SportId == sportId.Value))
+                .SelectData(userId)
                 .ToListAsync();
-
-            return entities.MapTo<List<AppointmentViewModel>>();
+            entities = entities.Where(x => (isActual == null) || (currentDate <= x.Date.AddSeconds(x.StartTime.TotalSeconds)) == isActual.Value).ToList();
+            return entities.MapTo<List<AppointmentShortViewModel>>();
         }
 
         public async Task<AppointmentViewModel> GetAsync(long id)
@@ -114,15 +113,29 @@ namespace SportsSocialNetwork.Services
         public async Task DeleteAsync(long id)
         {
             await _commonRepository.DeleteAsync<Appointment>(id);
-
             await _commonRepository.SaveAsync();
         }
 
-        public async Task<List<AppointmentShortViewModel>> GetForPlaygroundAsync(long id, DateTime currentDate)
+        public async Task<List<AppointmentShortViewModel>> GetForPlaygroundAsync(long id, DateTime currentDate, string currentUserId)
         {
             var entities = await _commonRepository.FindByCondition<Appointment>(x =>
                 x.PlaygroundId == id && x.Date >= currentDate.Date && (x.Date == currentDate && x.StartTime >= currentDate.TimeOfDay || x.Date != currentDate))
                 .Take(10)
+                .SelectData(currentUserId)
+                .ToListAsync();
+
+            foreach (var entity in entities)
+                entity.Participation = entity.Visits.Any(x => x.MemberId == currentUserId);
+
+            return entities.MapTo<List<AppointmentShortViewModel>>();
+        }
+    }
+
+    internal static class AppointmentQueryHelper 
+    {
+        internal static IQueryable<Appointment> SelectData(this IQueryable<Appointment> query, string currentUserId)
+        {
+            return query
                 .Select(x => new Appointment
                 {
                     Id = x.Id,
@@ -130,6 +143,7 @@ namespace SportsSocialNetwork.Services
                     EndTime = x.EndTime,
                     Date = x.Date,
                     ParticipantsQuantity = x.ParticipantsQuantity,
+                    Participation = x.Visits.Any(x => x.MemberId == currentUserId),
                     Playground = new Playground
                     {
                         Name = x.Playground.Name,
@@ -142,19 +156,17 @@ namespace SportsSocialNetwork.Services
                         FirstName = x.Initiator.FirstName,
                         LastName = x.Initiator.LastName,
                     },
-                    Sport = new Sport 
+                    Sport = new Sport
                     {
                         Name = x.Sport.Name
                     },
-                    Visits = x.Visits.Select(y => new AppointmentVisiting 
+                    Visits = x.Visits.Select(y => new AppointmentVisiting
                     {
-                        Id = y.Id
+                        Id = y.Id,
+                        MemberId = y.MemberId
                     }).ToList()
                 })
-                .OrderBy(x => x.Date)
-                .ToListAsync();
-
-            return entities.MapTo<List<AppointmentShortViewModel>>();
+                .OrderBy(x => x.Date);
         }
     }
 }

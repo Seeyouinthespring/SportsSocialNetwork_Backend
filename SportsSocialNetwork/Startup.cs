@@ -80,60 +80,22 @@ namespace SportsSocialNetwork
                     //x.SerializerSettings.Culture.NumberFormat.NumberGroupSeparator = "";
                     x.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss";
                 })
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        context.HttpContext.Response.StatusCode = 400;
+                        return ValidationModelHelper.GenerateErrorMessage(context.ModelState);
+                    };
+                    options.SuppressMapClientErrors = true;
+                })
             //    .AddJsonOptions(opts =>
             //{
             //    opts.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
             //})
             ;
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Version = "beta",
-                    Title = "SportSocialNetwork",
-                    Description = "API for sports social network",
-                    TermsOfService = new Uri("https://github.com/Seeyouinthespring/MEMAnalyzer_Backend/tree/main/MEMAnalyzer_Backend"),
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Nick Zhuravlyov",
-                        Email = "colya.juravlyov2011@ya.ru",
-                        Url = new Uri("https://vk.com/id118971987"),
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "Use under LICX",
-                        Url = new Uri("https://vk.com/id118971987"),
-                    }
-                });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement 
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] { }
-                    }
-                });
-                
-
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
+            services.ConfigureSwagger();
 
             AddOwnServices(services);
 
@@ -175,14 +137,15 @@ namespace SportsSocialNetwork
                 endpoints.MapControllers();
             });
 
-            app.UseSwagger();
+            app.AddSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
+            //app.UseSwagger();
 
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                c.RoutePrefix = string.Empty;
-            });
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            //    c.RoutePrefix = string.Empty;
+            //});
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SportsSocialNetwork.Attributes;
 using SportsSocialNetwork.Business.BusinessModels;
 using SportsSocialNetwork.Business.Constants;
+using SportsSocialNetwork.Helpers;
 using SportsSocialNetwork.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,10 +26,10 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerResponse200(typeof(List<AppointmentViewModel>))]
-        public async Task<IActionResult> Get()
+        [SwaggerResponse200(typeof(List<AppointmentShortViewModel>))]
+        public async Task<IActionResult> Get(bool? isActual, int? sportId, int? playgroundId )
         {
-            return await GetResultAsync(() => _service.GetAllAsync());
+            return await GetResultAsync(() => _service.GetAllAsync(isActual, sportId, playgroundId, GetCurrentUserId(), GetCurrentDate()));
         }
         #endregion
 
@@ -42,7 +43,7 @@ namespace SportsSocialNetwork.Controllers
         [SwaggerResponse200(typeof(List<AppointmentShortViewModel>))]
         public async Task<IActionResult> GetForPlayground(long id)
         {
-            return await GetResultAsync(() => _service.GetForPlaygroundAsync(id, GetCurrentDate()));
+            return await GetResultAsync(() => _service.GetForPlaygroundAsync(id, GetCurrentDate(), GetCurrentUserId()));
         }
         #endregion
 
@@ -68,14 +69,21 @@ namespace SportsSocialNetwork.Controllers
         [Authorize(Roles = UserRoles.SPORTSMAN)]
         [HttpPost]
         [SwaggerResponse200(typeof(AppointmentViewModel))]
+        [AppointmentAdditingConflict]
         public async Task<IActionResult> Create([FromBody] AppointmentDtoModel model)
         {
+            if (!ModelState.IsValid) 
+            {
+
+                HttpContext.Response.StatusCode = 400;
+                return ValidationModelHelper.GenerateErrorMessage(ModelState);
+            }
             string userId = GetCurrentUserId();
 
             AppointmentAdditingError result = await _service.CreateAsync(model, userId);
             return (result) switch
             {
-                AppointmentAdditingError.WrongSport => GenerateErrorResponse(409, "wrongSport", "Выбраный спорт не подход для данной площадки"),
+                AppointmentAdditingError.WrongSport => GenerateErrorResponse(409, AppointmentAdditingConflictAttribute.INCORRECT_SPORT, AppointmentAdditingConflictAttribute.Errors[AppointmentAdditingConflictAttribute.INCORRECT_SPORT]),
                 AppointmentAdditingError.WrongPlayground => GenerateErrorResponse(409, "wrongPlayground", "Данное действие нельзя совершить для коммерческой площадки"),
                 AppointmentAdditingError.WrongTimeInterval => GenerateErrorResponse(409, "wrongTimings", "Нельзя назначить активность в этот период времени"),
                 AppointmentAdditingError.DuplicateAppointment => GenerateErrorResponse(409, "DuplicateAppointment", "У вас уже есть запланированная встреча на это время"),

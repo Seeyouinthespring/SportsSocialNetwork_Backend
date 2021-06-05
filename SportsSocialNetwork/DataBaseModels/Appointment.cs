@@ -27,5 +27,8 @@ namespace SportsSocialNetwork.DataBaseModels
         public Sport Sport { get; set; }
 
         public ICollection<AppointmentVisiting> Visits { get; set; }
+
+        [NotMapped]
+        public bool Participation { get; set; }
     }
 }
