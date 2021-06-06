@@ -67,7 +67,7 @@ namespace SportsSocialNetwork.Services
             return AppointmentAdditingError.Ok;
         }
 
-        public async Task<AppointmentViewModel> UpdateAsync(AppointmentDtoModel model, long id, string userId)
+        public async Task<SingleAppointmentViewModel> UpdateAsync(AppointmentDtoModel model, long id, string userId)
         {
             var entity = await _commonRepository.FindByCondition<Appointment>(x => x.Id == id)
                 .Include(x => x.Initiator)
@@ -97,17 +97,13 @@ namespace SportsSocialNetwork.Services
             return entities.MapTo<List<AppointmentShortViewModel>>();
         }
 
-        public async Task<AppointmentViewModel> GetAsync(long id)
+        public async Task<SingleAppointmentViewModel> GetAsync(long id)
         {
             var entity = await _commonRepository.FindByCondition<Appointment>(x => x.Id == id)
-                .Include(x => x.Initiator)
-                .Include(x => x.Visits).ThenInclude(x => x.Member)
-                .Include(x => x.Playground).ThenInclude(x => x.Sports).ThenInclude(x => x.Sport)
+                .SelectDataForOneAppointment()
                 .FirstOrDefaultAsync();
-
             if (entity == null) return null;
-
-            return entity.MapTo<AppointmentViewModel>();
+            return entity.MapTo<SingleAppointmentViewModel>();
         }
 
         public async Task DeleteAsync(long id)
@@ -164,6 +160,49 @@ namespace SportsSocialNetwork.Services
                     {
                         Id = y.Id,
                         MemberId = y.MemberId
+                    }).ToList()
+                })
+                .OrderBy(x => x.Date);
+        }
+
+        internal static IQueryable<Appointment> SelectDataForOneAppointment(this IQueryable<Appointment> query)
+        {
+            return query
+                .Select(x => new Appointment
+                {
+                    Id = x.Id,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    Date = x.Date,
+                    ParticipantsQuantity = x.ParticipantsQuantity,
+                    Description= x.Description,
+                    InitiatorId = x.InitiatorId,
+                    Playground = new Playground
+                    {
+                        Name = x.Playground.Name,
+                        City = x.Playground.City,
+                        Street = x.Playground.Street,
+                        HouseNumber = x.Playground.HouseNumber,
+                        Photo = x.Playground.Photo
+                    },
+                    Sport = new Sport
+                    {
+                        Name = x.Sport.Name
+                    },
+                    Visits = x.Visits.Select(y => new AppointmentVisiting
+                    {
+                        Id = y.Id,
+                        MemberId = y.MemberId,
+                        Status = y.Status,
+                        Member = new ApplicationUser 
+                        {
+                            Id = y.Member.Id,
+                            LastName = y.Member.LastName,
+                            FirstName = y.Member.FirstName,
+                            Gender = y.Member.Gender,
+                            DateOfBirth = y.Member.DateOfBirth,
+                            //Photo = y.Member.Photo
+                        }
                     }).ToList()
                 })
                 .OrderBy(x => x.Date);

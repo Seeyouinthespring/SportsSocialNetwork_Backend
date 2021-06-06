@@ -32,7 +32,7 @@ namespace SportsSocialNetwork.Controllers
         {
             var userId = GetCurrentUserId();
             var appointment = await _appointmentsService.GetAsync(appointmentId);
-            if (appointment.Initiator.Id == userId)
+            if (appointment.InitiatorId == userId)
                 GenerateErrorResponse(409, "AdditingProhibited", "Вы не можете добавить запись на встречу, созданную вами");
             var model = await _service.GetVisitingByAppointmentAsync(appointmentId, userId);
             if (model != null)

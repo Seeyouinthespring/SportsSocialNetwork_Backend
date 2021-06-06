@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SportsSocialNetwork.Business.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -50,5 +51,24 @@ namespace SportsSocialNetwork.Business.BusinessModels
         public string Sport { get; set; }
         public int CurrentVisitors { get; set; }
         public bool Participation { get; set; }
+    }
+
+    public class SingleAppointmentViewModel : AppointmentShortViewModel
+    { 
+        public string InitiatorId { get; set; }
+        public List<VisitViewModel> Visits { get; set; }
+        public string PlaygroundPhoto { get; set; }
+    }
+
+    public class VisitViewModel 
+    {
+        public long Id { get; set; }
+        public string MemberId { get; set; }
+        public string MemberLastName { get; set; }
+        public string MemberFirstName { get; set; }
+        public int MemberAge { get; set; }
+        public bool MemberGender { get; set; }
+        public VisitingStatus Status { get; set; }
+       // public string MemberPhoto { get; set; }
     }
 }

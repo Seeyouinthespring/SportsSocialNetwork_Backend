@@ -53,7 +53,7 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [SwaggerResponse200(typeof(AppointmentViewModel))]
+        [SwaggerResponse200(typeof(SingleAppointmentViewModel))]
         public async Task<IActionResult> GetById(long id)
         {
             return await GetResultAsync(() => _service.GetAsync(id));
@@ -102,12 +102,12 @@ namespace SportsSocialNetwork.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPut("{id}")]
-        [SwaggerResponse200(typeof(AppointmentViewModel))]
+        [SwaggerResponse200(typeof(SingleAppointmentViewModel))]
         public async Task<IActionResult> Update([FromBody] AppointmentDtoModel model, long id)
         {
             var appointment = await _service.GetAsync(id);
             var userId = GetCurrentUserId();
-            if (userId != appointment.Initiator.Id)
+            if (userId != appointment.InitiatorId)
                 return GenerateErrorResponse(409, "UpdatingProhibited", "У вас нет прав для редактирования этой записи");
             return await GetResultAsync(() => _service.UpdateAsync(model, id, userId));
         }
@@ -126,7 +126,7 @@ namespace SportsSocialNetwork.Controllers
         {
             var appointment = await _service.GetAsync(id);
             var userId = GetCurrentUserId();
-            if (userId != appointment.Initiator.Id)
+            if (userId != appointment.InitiatorId)
                 return GenerateErrorResponse(409, "DeletionProhibited", "У вас нет прав для удаления этой записи");
             await _service.DeleteAsync(id);
             return NoContent();

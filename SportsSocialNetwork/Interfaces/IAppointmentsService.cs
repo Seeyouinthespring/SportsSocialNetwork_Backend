@@ -17,10 +17,10 @@ namespace SportsSocialNetwork.Interfaces
     public interface IAppointmentsService
     {
         Task<AppointmentAdditingError> CreateAsync(AppointmentDtoModel model, string userId);
-        Task<AppointmentViewModel> UpdateAsync(AppointmentDtoModel model, long id, string userId);
+        Task<SingleAppointmentViewModel> UpdateAsync(AppointmentDtoModel model, long id, string userId);
         Task<List<AppointmentShortViewModel>> GetAllAsync(bool? isActual, int? sportId, int? playgroundId, string userId, DateTime currentDate);
         Task<List<AppointmentShortViewModel>> GetForPlaygroundAsync(long id, DateTime currentDate, string currentUserId);
-        Task<AppointmentViewModel> GetAsync(long id);
+        Task<SingleAppointmentViewModel> GetAsync(long id);
         Task DeleteAsync(long id);
     }
 }

@@ -84,8 +84,9 @@ namespace SportsSocialNetwork.Controllers
             {
                 photo = user.Photo,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
-            });
+                expiration = token.ValidTo,
+                id = user.Id
+            }) ;
         }
 
         /// <summary>

@@ -141,6 +141,19 @@ namespace SportsSocialNetwork
                 .ForMember(dest => dest.InitiatorLastName, opt => opt.MapFrom(src => src.Initiator.LastName))
                 .ForMember(dest => dest.Sport, opt => opt.MapFrom(src => src.Sport.Name))
                 .ForMember(dest => dest.CurrentVisitors, opt => opt.MapFrom(src => src.Visits.Count()));
+
+            CreateMap<Appointment, SingleAppointmentViewModel>()
+                .ForMember(dest => dest.PlaygroundPhoto,opt => opt.MapFrom(src => src.Playground.Photo != null ? Convert.ToBase64String(src.Playground.Photo) : null))
+                .ForMember(dest => dest.Visits, opt => opt.MapFrom(src => src.Visits))
+                .IncludeBase<Appointment, AppointmentShortViewModel>();
+
+            CreateMap<AppointmentVisiting, VisitViewModel>()
+                .ForMember(dest => dest.MemberLastName, opt => opt.MapFrom(src => src.Member.LastName))
+                .ForMember(dest => dest.MemberFirstName, opt => opt.MapFrom(src => src.Member.FirstName))
+                .ForMember
+                (dest => dest.MemberAge, opt => opt.MapFrom
+                    (src => src.Member.DateOfBirth > DateTime.Now.AddYears(DateTime.Now.Year - src.Member.DateOfBirth.Year) ? DateTime.Now.Year - src.Member.DateOfBirth.Year - 1 : DateTime.Now.Year - src.Member.DateOfBirth.Year))
+                .ForMember(dest => dest.MemberGender, opt => opt.MapFrom(src => src.Member.Gender));
         }
     }
 }
