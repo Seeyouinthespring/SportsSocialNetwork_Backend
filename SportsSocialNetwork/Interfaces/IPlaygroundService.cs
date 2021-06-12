@@ -22,6 +22,8 @@ namespace SportsSocialNetwork.Interfaces
         Task<List<PlaygroundShortViewModel>> GetAllShortModelsAsync(PlaygroundQueryModel queryModel);
 
         Task UpdatePhotoAsync(byte[] fileBytes, long playgroundId);
+
+        Task<List<PlaygroundMapViewModel>> GetPlaygroundsForMapAsync();
     }
 
     public class PlaygroundQueryModel : SkipTakeRequestParamsModel

@@ -163,7 +163,7 @@ namespace SportsSocialNetwork.Controllers
 
         #region Get Playground summary info
         /// <summary>
-        /// Get free for rent timings
+        /// Get playground info
         /// </summary>
         /// <param name="id">Playground id. Example: 5</param>
         /// <returns></returns>
@@ -180,7 +180,7 @@ namespace SportsSocialNetwork.Controllers
         /// Update Playground
         /// </summary>
         /// <param name="id">PlaygroundId. Example 2</param>
-        /// /// <param name="file">Photo file. Example 2</param>
+        /// <param name="file">Photo file. Example 2</param>
         /// <returns></returns>
         //[Authorize(Roles = UserRoles.LANDLORD + "," + UserRoles.ADMINISTRATOR)]
         [HttpPut("{id}/Photo")]
@@ -199,6 +199,19 @@ namespace SportsSocialNetwork.Controllers
 
             await _service.UpdatePhotoAsync(fileBytes, id);
             return Ok();
+        }
+        #endregion
+
+        #region Get Playgrounds for map
+        /// <summary>
+        /// Get playgrounds for map
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("MapObjects")]
+        [SwaggerResponse200(typeof(PlaygroundMapViewModel))]
+        public async Task<IActionResult> GetPlaygroundsForMap()
+        {
+            return await GetResultAsync(() => _service.GetPlaygroundsForMapAsync());
         }
         #endregion
     }

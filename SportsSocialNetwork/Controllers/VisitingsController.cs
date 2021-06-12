@@ -46,19 +46,19 @@ namespace SportsSocialNetwork.Controllers
         /// <summary>
         /// Update Appointment visiting status
         /// </summary>
-        /// <param name="id">AppointmentVisitId. Example 2</param>
+        /// <param name="appointmentId">AppointmentId. Example 2</param>
         /// <returns></returns>
-        [HttpPut("{id}")]
+        [HttpPut("{appointmentId}")]
         [SwaggerResponse200(typeof(VisitingBaseModel))]
-        public async Task<IActionResult> Update(long id)
+        public async Task<IActionResult> Update(long appointmentId)
         {
-            var model = await _service.GetVisitingByIdAsync(id);
-            if (model == null) 
-                return NotFound();
+            //var model = await _service.GetVisitingByIdAsync(appointmentId);
+            //if (model == null) 
+            //    return NotFound();
             var userId = GetCurrentUserId();
-            if (userId != model.MemberId)
-                GenerateErrorResponse(409, "UpdatingProhibited", "У вас нет прав на редактирование этой записи");
-            return await GetResultAsync(() => _service.UpdateStatusAsync(id));
+            //if (userId != model.MemberId)
+            //    GenerateErrorResponse(409, "UpdatingProhibited", "У вас нет прав на редактирование этой записи");
+            return await GetResultAsync(() => _service.UpdateStatusAsync(appointmentId, userId));
         }
         #endregion
 
@@ -66,19 +66,19 @@ namespace SportsSocialNetwork.Controllers
         /// <summary>
         /// Delete Appointment Visiting
         /// </summary>
-        /// <param name="id">Appointment visiting id. Example: 5</param>
+        /// <param name="appointmentId">Appointment visiting id. Example: 5</param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("{appointmentId}")]
         [SwaggerResponseNoContent]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(long appointmentId)
         {
-            var model = await _service.GetVisitingByIdAsync(id);
-            if (model == null)
-                return NotFound();
+            //var model = await _service.GetVisitingByIdAsync(id);
+            //if (model == null)
+            //    return NotFound();
             var userId = GetCurrentUserId();
-            if (userId != model.MemberId)
-                GenerateErrorResponse(409, "DeletingProhibited", "У вас нет прав на удаление этой записи");
-            await _service.DeleteAsync(id);
+            //if (userId != model.MemberId)
+            //    GenerateErrorResponse(409, "DeletingProhibited", "У вас нет прав на удаление этой записи");
+            await _service.DeleteAsync(appointmentId, userId);
             return NoContent();
         }
         #endregion

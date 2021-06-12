@@ -51,16 +51,18 @@ namespace SportsSocialNetwork.Services
             return await GetVisitingByIdAsync(entity.Id);
         }
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id, string currentUserId)
         {
-            await _commonRepository.DeleteAsync<AppointmentVisiting>(id);
+            AppointmentVisiting entity = await _commonRepository.FindFirstByConditionAsync<AppointmentVisiting>(x => x.AppointmentId == id && x.MemberId == currentUserId);
+
+            await _commonRepository.DeleteAsync<AppointmentVisiting>(entity.Id);
 
             await _commonRepository.SaveAsync();
         }
 
-        public async Task<VisitingBaseModel> UpdateStatusAsync(long id)
+        public async Task<VisitingBaseModel> UpdateStatusAsync(long id,string currentUserId)
         {
-            AppointmentVisiting entity = await _commonRepository.FindFirstByConditionAsync<AppointmentVisiting>(x => x.Id == id);
+            AppointmentVisiting entity = await _commonRepository.FindFirstByConditionAsync<AppointmentVisiting>(x => x.AppointmentId == id && x.MemberId == currentUserId);
 
             if (entity == null) return null;
 

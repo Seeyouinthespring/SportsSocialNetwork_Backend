@@ -154,6 +154,8 @@ namespace SportsSocialNetwork
                 (dest => dest.MemberAge, opt => opt.MapFrom
                     (src => src.Member.DateOfBirth > DateTime.Now.AddYears(DateTime.Now.Year - src.Member.DateOfBirth.Year) ? DateTime.Now.Year - src.Member.DateOfBirth.Year - 1 : DateTime.Now.Year - src.Member.DateOfBirth.Year))
                 .ForMember(dest => dest.MemberGender, opt => opt.MapFrom(src => src.Member.Gender));
+
+            CreateMap<Playground, PlaygroundMapViewModel>();
         }
     }
 }

@@ -69,6 +69,8 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
     public class PlaygroundSummaryInfoViewModel : PlaygroundDtoModel
     {
+        public long Id { get; set; }
+
         public ApplicationUserBaseViewModel ResponsiblePerson { get; set; }
 
         //public List<CommentViewModel> Comments { get; set; }
@@ -111,5 +113,16 @@ namespace SportsSocialNetwork.Business.BusinessModels
         public TypeOfCovering CoveringType { get; set; }
 
         public string Name { get; set; }
+    }
+
+    public class PlaygroundMapViewModel 
+    {
+        public string Name { get; set; }
+
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
+
+        public long Id { get; set; }
     }
 }

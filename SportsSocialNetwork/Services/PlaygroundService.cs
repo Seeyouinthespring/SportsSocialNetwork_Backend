@@ -204,5 +204,20 @@ namespace SportsSocialNetwork.Services
             _commonRepository.Update(entity);
             await _commonRepository.SaveAsync();
         }
+
+        public async Task<List<PlaygroundMapViewModel>> GetPlaygroundsForMapAsync()
+        {
+            List<Playground> entities = await _commonRepository.FindByCondition<Playground>(x => x.IsApproved == true)
+                .Select(x => new Playground
+                {
+                    Name = x.Name,
+                    Id = x.Id,
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude
+                })
+                .ToListAsync();
+
+            return entities.MapTo<List<PlaygroundMapViewModel>>();
+        }
     }
 }
