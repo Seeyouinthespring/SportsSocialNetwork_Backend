@@ -19,6 +19,7 @@ namespace SportsSocialNetwork
                 .ForMember(dest => dest.SportsProvided, opt => opt.MapFrom(src => src.Sports.Select(x => x.Sport)));
             CreateMap<PlaygroundSportConnection, long>().ConvertUsing(x => x.SportId);
             CreateMap<PlaygroundDtoModel, Playground>()
+                .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.Photo != null ? Convert.FromBase64String(src.Photo) : null))
                 .ForMember(dest => dest.Sports, opt => opt.MapFrom(src => src.SportsIds));
             CreateMap<long, PlaygroundSportConnection>()
                 .ForMember(dest => dest.SportId, opt => opt.MapFrom(x => x));

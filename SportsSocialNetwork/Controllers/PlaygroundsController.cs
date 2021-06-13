@@ -68,11 +68,13 @@ namespace SportsSocialNetwork.Controllers
         /// </summary>
         /// <param name="model">Playground Model</param>
         /// <returns></returns>
-        [Authorize(Roles = UserRoles.LANDLORD +","+ UserRoles.ADMINISTRATOR)]
+        [Authorize(Roles = UserRoles.LANDLORD +","+ UserRoles.SPORTSMAN)]
         [HttpPost]
         [SwaggerResponse200(typeof(PlaygroundViewModel))]
         public async Task<IActionResult> Create([FromBody]PlaygroundDtoModel model)
         {
+            if (!this.ModelState.IsValid)
+                return GenerateErrorResponse(400, "BadRequest", "Данные введены не верно");
             string userId = null;
             if (await GetCurrentUserRole() == UserRoles.LANDLORD)
                 userId = GetCurrentUserId();
