@@ -11,6 +11,12 @@ namespace SportsSocialNetwork.Interfaces
 
         Task<List<RentRequestViewModel>> GetAllAsync(string userId = null, long? playgroundId = null);
 
+        Task<List<RentRequestShortViewModel>> GetForSportsmanAsync(string userId, DateTime date);
+
+        Task<List<RentShortViewModel>> GetRentsForSportsmanAsync(string userId, DateTime currentDate, DateTime? date = null, bool isFuture = true);
+
+        Task<RentRequestFullViewModel> GetRequestAsync(long id, string currentUserID, DateTime currentDate, string role);
+
         Task<RentRequestViewModel> GetAsync(long id);
 
         Task DeleteAsync(long id);

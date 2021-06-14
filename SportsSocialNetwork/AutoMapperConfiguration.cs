@@ -54,6 +54,27 @@ namespace SportsSocialNetwork
                 .ForMember(dest => dest.PlannedVisits, opt => opt.MapFrom(src => src.Visits));
             CreateMap<AppointmentDtoModel, Appointment>();
 
+
+            CreateMap<RentRequest, RentRequestFullViewModel>()
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(x => x.Playground.Name))
+                .ForMember(dest => dest.PlaygroundId, opt => opt.MapFrom(x => x.Playground.Id))
+                .ForMember(dest => dest.PlaygroundCity, opt => opt.MapFrom(x => x.Playground.City))
+                .ForMember(dest => dest.PlaygroundStreet, opt => opt.MapFrom(x => x.Playground.Street))
+                .ForMember(dest => dest.PlaygroundHouseNumber, opt => opt.MapFrom(x => x.Playground.HouseNumber))
+                .ForMember(dest => dest.PlaygroundPhoto, opt => opt.MapFrom(x => x.Playground.Photo != null ? Convert.ToBase64String(x.Playground.Photo) : null))
+                .ForMember(dest => dest.PersonFirstName, opt => opt.MapFrom(x => x.Renter == null ? x.Playground.ResponsiblePerson.FirstName : x.Renter.FirstName))
+
+                .ForMember(dest => dest.PersonLastName, opt => opt.MapFrom(x => x.Renter == null ? x.Playground.ResponsiblePerson.LastName : x.Renter.LastName))
+                .ForMember(dest => dest.PersonId, opt => opt.MapFrom(x => x.Renter == null ? x.Playground.ResponsiblePerson.Id : x.Renter.Id))
+                .ForMember(dest => dest.PersonGender, opt => opt.MapFrom(x => x.Renter == null ? x.Playground.ResponsiblePerson.Gender : x.Renter.Gender))
+                .ForMember(dest => dest.PersonPhoto, opt => opt.MapFrom(x =>
+                        (x.Renter == null && x.Playground.ResponsiblePerson.Photo != null) ?
+                        Convert.ToBase64String(x.Playground.ResponsiblePerson.Photo) :
+                        (x.Renter != null && x.Renter.Photo != null) ?
+                        Convert.ToBase64String(x.Renter.Photo) : null));
+
+            CreateMap<RentRequest, RentRequestShortViewModel>()
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name));
             CreateMap<RentRequest, RentRequestViewModel>()
                 .ForMember(dest => dest.Playground, opt => opt.MapFrom(x => x.Playground))
                 //.ForMember(dest => dest.Renter.RentRequestId, opt => opt.MapFrom(src => src.Id));
@@ -104,6 +125,8 @@ namespace SportsSocialNetwork
                 .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name))
                 .ForMember(dest => dest.IsExecuted, opt => opt.MapFrom(src => src.IsExecuted))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => ActivityType.Rent));
+            CreateMap<ConfirmedRent, RentShortViewModel>()
+                .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name));
 
             CreateMap<PersonalActivity, CommonActivityViewModel>()
                 .ForMember(dest => dest.PlaygroundName, opt => opt.MapFrom(src => src.Playground.Name))

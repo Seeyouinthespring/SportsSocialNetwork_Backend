@@ -29,4 +29,21 @@ namespace SportsSocialNetwork.Business.BusinessModels
 
         public float Fee { get; set; }
     }
+
+    public class RentShortViewModel
+    {
+        public long Id { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string PlaygroundName { get; set; }
+
+        public TimeSpan StartTime { get; set; }
+
+        public TimeSpan EndTime { get; set; }
+
+        public bool IsExecuted { get; set; }
+
+        public float Fee { get; set; }
+    }
 }

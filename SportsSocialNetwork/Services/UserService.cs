@@ -61,7 +61,6 @@ namespace SportsSocialNetwork.Services
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     UserName = x.UserName,
-                    Photo = x.Photo,
                     Gender = x.Gender,
                     DateOfBirth = x.DateOfBirth,
                     ContactInformation = new ContactInformation 

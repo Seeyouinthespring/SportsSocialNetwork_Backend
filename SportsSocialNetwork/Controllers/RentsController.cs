@@ -76,6 +76,49 @@ namespace SportsSocialNetwork.Controllers
         }
         #endregion
 
+        #region GetAll 
+        /// <summary>
+        /// Get Rent requests for sportsman
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Sportsman")]
+        [Authorize(Roles = UserRoles.SPORTSMAN)]
+        [SwaggerResponse200(typeof(List<RentShortViewModel>))]
+        public async Task<IActionResult> GetRentsForSportsman([FromQuery] DateTime? date, [FromQuery] bool isFuture)
+        {
+            return await GetResultAsync(() => _service.GetRentsForSportsmanAsync(GetCurrentUserId(), GetCurrentDate(), date, isFuture));
+        }
+        #endregion
+
+        #region GetAll 
+        /// <summary>
+        /// Get Rent requests for sportsman
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Request/Sportsman")]
+        [Authorize(Roles = UserRoles.SPORTSMAN)]
+        [SwaggerResponse200(typeof(List<RentRequestShortViewModel>))]
+        public async Task<IActionResult> GetForSportsman()
+        {
+            return await GetResultAsync(() => _service.GetForSportsmanAsync(GetCurrentUserId(), GetCurrentDate()));
+        }
+        #endregion
+
+        #region GetAll 
+        /// <summary>
+        /// Get Rent requests for sportsman
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Request/{id}")]
+        [Authorize]
+        [SwaggerResponse200(typeof(RentRequestFullViewModel))]
+        public async Task<IActionResult> GetRequest(long id)
+        {
+            string role =await GetCurrentUserRole();
+            return await GetResultAsync(() => _service.GetRequestAsync(id,GetCurrentUserId(),GetCurrentDate(), role));
+        }
+        #endregion
+
         #region Approve rent request
         /// <summary>
         /// Create Rent

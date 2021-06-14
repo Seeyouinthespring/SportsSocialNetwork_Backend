@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportsSocialNetwork.Business.BusinessModels;
+using SportsSocialNetwork.Business.Constants;
 using SportsSocialNetwork.DataBaseModels;
 using SportsSocialNetwork.Helpers;
 using SportsSocialNetwork.Interfaces;
@@ -161,6 +162,72 @@ namespace SportsSocialNetwork.Services
 
             List<ConfirmedRent> entities = await query.ToListAsync();
             return entities.MapTo<List<RentViewModel>>();
+        }
+
+        public async Task<List<RentRequestShortViewModel>> GetForSportsmanAsync(string userId, DateTime date)
+        {
+            var entities = await _commonRepository.FindByCondition<RentRequest>(x => x.RenterId == userId && date <= x.Date)
+                .Select(x => new RentRequest 
+                {
+                    Date = x.Date,
+                    Id = x.Id,
+                    Description = x.Description,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    IsOnce = x.IsOnce,
+                    DayOfTheWeek = x.DayOfTheWeek,
+                    Playground = new Playground 
+                    {
+                        Name = x.Playground.Name
+                    }
+                })
+                .ToListAsync();
+            return entities.MapTo<List<RentRequestShortViewModel>>();
+        }
+
+        public async Task<List<RentShortViewModel>> GetRentsForSportsmanAsync(string userId, DateTime currentDate, DateTime? date, bool isFuture)
+        {
+            var entities = await _commonRepository.FindByCondition<ConfirmedRent>(x => x.RenterId == userId && (x.Date >= currentDate) == isFuture && (date == null || date.Value == x.Date.Date))
+                .Select(x => new ConfirmedRent
+                {
+                    Date = x.Date,
+                    Id = x.Id,
+                    Fee = x.Fee,
+                    IsExecuted = x.IsExecuted,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    Playground = new Playground
+                    {
+                        Name = x.Playground.Name
+                    }
+                })
+                .ToListAsync();
+            if (isFuture)
+                entities = entities.OrderBy(x => x.Date).ToList();
+            else
+                entities = entities.OrderByDescending(x => x.Date).ToList();
+            return entities.MapTo<List<RentShortViewModel>>();
+        }
+
+        public async Task<RentRequestFullViewModel> GetRequestAsync(long id, string currentUserID, DateTime currentDate, string role)
+        {
+            bool check = role == UserRoles.SPORTSMAN;
+            var entity = await _commonRepository.FindByCondition<RentRequest>(x => x.Id == id)
+                .SelectData(check)
+                .FirstOrDefaultAsync();
+            if (entity == null) return null;
+
+            var model = entity.MapTo<RentRequestFullViewModel>();
+
+            if (entity.Renter == null)
+                model.PersonAge = entity.Playground.ResponsiblePerson.DateOfBirth > DateTime.Now.AddYears(DateTime.Now.Year - entity.Playground.ResponsiblePerson.DateOfBirth.Year) ?
+                        DateTime.Now.Year - entity.Playground.ResponsiblePerson.DateOfBirth.Year - 1 :
+                        DateTime.Now.Year - entity.Playground.ResponsiblePerson.DateOfBirth.Year;
+            else
+                model.PersonAge = entity.Renter.DateOfBirth > DateTime.Now.AddYears(DateTime.Now.Year - entity.Renter.DateOfBirth.Year) ?
+                        DateTime.Now.Year - entity.Renter.DateOfBirth.Year - 1 :
+                        DateTime.Now.Year - entity.Renter.DateOfBirth.Year;
+            return model;
         }
     }
 }
